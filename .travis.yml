@@ -1,22 +1,53 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia
 language: julia
+
 notifications:
   email: false
+
 julia:
+  - 1.4
   - 1.5
   - nightly
+
 os:
   - linux
   - osx
+
 arch:
   - x64
+
 cache:
   directories:
     - ~/.julia/artifacts
+
+env:
+  - DATADEPS_ALWAYS_ACCEPT=true
+
+branches:
+  only:
+  - master
+  - develop
+
+script: 
+ - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+ - julia --project -e 'using Pkg; Pkg.add("PyCall"); Pkg.instantiate(); ENV["PYTHON"] = ""; Pkg.build(); using PyCall; pyimport_conda("scipy", "scipy")'
+ - julia --project -e 'using PyCall; pyimport_conda("scipy", "scipy")' # retry
+ - julia --project -e 'using Pkg; Pkg.test(; coverage=true)';
+
 jobs:
   fast_finish: true
   allow_failures:
     - julia: nightly
+  include:
+    - stage: Documentation
+      julia: 1.5
+      script: julia --project=docs -e '
+          using Pkg;
+          Pkg.develop(PackageSpec(path=pwd()));
+          Pkg.instantiate();
+          include("docs/make.jl");'
+      after_success: skip
+
 after_success:
   - |
     julia -e '
