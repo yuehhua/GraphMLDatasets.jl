@@ -1,4 +1,5 @@
 module GraphMLDatasets
+    using CSV
     using DataDeps: DataDep, register, @datadep_str
     using HTTP
     using JLD2
@@ -15,7 +16,7 @@ module GraphMLDatasets
         PPI,
         Reddit,
         QM7b,
-        # Entities,
+        Entities,
         dataset,
         traindata,
         validdata,
@@ -27,7 +28,7 @@ module GraphMLDatasets
     include("./ppi.jl")
     include("./reddit.jl")
     include("./qm7b.jl")
-    # include("./entities.jl")
+    include("./entities.jl")
     include("./utils.jl")
 
     function __init__()
@@ -36,6 +37,6 @@ module GraphMLDatasets
         ppi_init()
         reddit_init()
         qm7b_init()
-        # entities_init()
+        entities_init()
     end
 end

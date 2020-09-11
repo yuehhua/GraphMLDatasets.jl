@@ -9,7 +9,7 @@ tests = [
     "ppi",
     "reddit",
     "qm7b",
-    # "entities"
+    "entities"
 ]
 
 @testset "GraphMLDatasets.jl" begin

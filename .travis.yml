@@ -29,10 +29,20 @@ branches:
   - develop
 
 script: 
- - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
- - julia --project -e 'using Pkg; Pkg.add("PyCall"); Pkg.instantiate(); ENV["PYTHON"] = ""; Pkg.build(); using PyCall; pyimport_conda("scipy", "scipy")'
- - julia --project -e 'using PyCall; pyimport_conda("scipy", "scipy")' # retry
- - julia --project -e 'using Pkg; Pkg.test(; coverage=true)';
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - |
+    julia --project -e '
+      using Pkg; Pkg.add("PyCall");
+      Pkg.instantiate(); ENV["PYTHON"] = ""; Pkg.build();
+      using PyCall;
+      pyimport_conda("scipy", "scipy");
+      pyimport_conda("rdflib", "rdflib")'
+  - |
+    julia --project -e '
+      using PyCall;
+      pyimport_conda("scipy", "scipy");
+      pyimport_conda("rdflib", "rdflib")' # retry
+  - julia --project -e 'using Pkg; Pkg.test(; coverage=true)';
 
 jobs:
   fast_finish: true
