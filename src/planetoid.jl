@@ -71,7 +71,7 @@ struct Planetoid <: Dataset
     dataset::Symbol
 
     function Planetoid(ds::Symbol)
-        ds in PLANETOID_DATASETS || throw(error("`dataset` should be one of citeseer, cora, pubmed."))
+        @assert ds in PLANETOID_DATASETS "`dataset` should be one of citeseer, cora, pubmed."
         new(ds)
     end
 end
