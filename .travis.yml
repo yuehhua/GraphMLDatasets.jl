@@ -35,13 +35,11 @@ script:
       using Pkg; Pkg.add("PyCall");
       Pkg.instantiate(); ENV["PYTHON"] = ""; Pkg.build();
       using PyCall;
-      pyimport_conda("scipy", "scipy");
-      pyimport_conda("rdflib", "rdflib")'
+      pyimport_conda("scipy", "scipy")'
   - |
     julia --project -e '
       using PyCall;
-      pyimport_conda("scipy", "scipy");
-      pyimport_conda("rdflib", "rdflib")' # retry
+      pyimport_conda("scipy", "scipy")' # retry
   - julia --project -e 'using Pkg; Pkg.test(; coverage=true)';
 
 jobs:
