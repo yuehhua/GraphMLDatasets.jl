@@ -13,7 +13,7 @@ ppi_init() = register(DataDep(
 ))
 
 function preprocess_ppi(local_path)
-    unzip(local_path)
+    unzip_zip(local_path)
 
     for phase in ["train", "test", "valid"]
         graph_file = @datadep_str "PPI/$(phase)_graph.json"

@@ -11,7 +11,7 @@ reddit_init() = register(DataDep(
 ))
 
 function preprocess_reddit(local_path)
-    unzip(local_path)
+    unzip_zip(local_path)
 
     graph_file = datadep"Reddit/reddit_graph.npz"
     data_file = datadep"Reddit/reddit_data.npz"
