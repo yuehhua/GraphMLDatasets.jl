@@ -5,7 +5,7 @@ reddit_init() = register(DataDep(
     Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper, containing
     Reddit posts belonging to different communities.
     """,
-    "https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/reddit.zip",
+    "https://data.dgl.ai/dataset/reddit.zip",
     "9a16353c28f8ddd07148fc5ac9b57b818d7911ea0fbe9052d66d49fc32b372bf";
     post_fetch_method=preprocess_reddit,
 ))
@@ -30,7 +30,7 @@ function preprocess_reddit(local_path)
     y = Vector{Int32}(py"data['label']")
     ids = Vector{Int32}(py"data['node_ids']")
     types = Vector{Int32}(py"data['node_types']")
-    
+
     jld2file = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
     @save jld2file graph X y ids types
 end

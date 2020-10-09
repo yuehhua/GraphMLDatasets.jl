@@ -7,7 +7,7 @@ ppi_init() = register(DataDep(
     sets, motif gene sets and immunological signatures as features (50 in
     total) and gene ontology sets as labels (121 in total).
     """,
-    "https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/ppi.zip",
+    "https://data.dgl.ai/dataset/ppi.zip",
     "1f5b2b09ac0f897fa6aa1338c64ab75a5473674cbba89380120bede8cddb2a6a";
     post_fetch_method=preprocess_ppi,
 ))
@@ -32,7 +32,7 @@ function preprocess_ppi(local_path)
         y = SparseMatrixCSC{Int32,Int64}(Array(py"y"))
         ids = Array(py"ids")
         graph = read_ppi_graph(graph_file)
-        
+
         jld2file = replace(local_path, "ppi.zip"=>"ppi.$(phase).jld2")
         @save jld2file graph X y ids
     end
