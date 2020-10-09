@@ -4,7 +4,7 @@ module GraphMLDatasets
     using HTTP
     using JLD2
     using JSON
-    using LightGraphs: SimpleDiGraph, add_edge!
+    using LightGraphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
     using MAT
     using PyCall
     using SparseArrays: SparseMatrixCSC, sparse
@@ -20,7 +20,11 @@ module GraphMLDatasets
         dataset,
         traindata,
         validdata,
-        testdata
+        testdata,
+        graphdata,
+        rawdata,
+        alldata,
+        metadata
 
     include("./dataset.jl")
     include("./planetoid.jl")
