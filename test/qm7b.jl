@@ -1,5 +1,5 @@
 @testset "qm7b" begin
-    names, X, T = dataset(QM7b())
+    names, X, T = alldata(QM7b())
     @test typeof(names) == Vector{String}
     @test size(names) == (14,)
     @test typeof(X) == Array{Float32,3}

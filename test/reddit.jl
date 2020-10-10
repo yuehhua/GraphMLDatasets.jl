@@ -1,5 +1,5 @@
 @testset "reddit" begin
-    g, X, y, ids, types = dataset(Reddit())
+    g, X, y, ids, types = alldata(Reddit())
     @test typeof(g) == SparseMatrixCSC{Int32,Int64}
     @test size(g) == (232965, 232965)
     @test typeof(X) == Matrix{Float32}
