@@ -39,15 +39,16 @@ function preprocess_planetoid(local_path)
         num_E = ne(sg)
         feat_dim = size(all_X, 2)
         label_dim = size(all_y, 2)
-        raw = Dict(:graph=>graph, :train_X=>train_X, :train_y=>train_y,
-                   :test_X=>test_X, :test_y=>test_y, :all_X=>all_X, :all_y=>all_y)
-        meta = (graph=(num_V=num_V, num_E=num_E),
-                train=(features_dim=(feat_dim, size(train_X, 1)), labels_dim=(label_dim, size(train_y, 1))),
-                test=(features_dim=(feat_dim, size(test_X, 1)), labels_dim=(label_dim, size(test_y, 1)))
-                )
         train_X, train_y = sparse(train_X'), sparse(train_y')
         test_X, test_y = sparse(test_X'), sparse(test_y')
         all_X, all_y = sparse(all_X'), sparse(all_y')
+        raw = Dict(:graph=>graph, :train_X=>train_X, :train_y=>train_y,
+                   :test_X=>test_X, :test_y=>test_y, :all_X=>all_X, :all_y=>all_y)
+        meta = (graph=(num_V=num_V, num_E=num_E),
+                train=(features_dim=(feat_dim, size(train_X, 2)), labels_dim=(label_dim, size(train_y, 2))),
+                test=(features_dim=(feat_dim, size(test_X, 2)), labels_dim=(label_dim, size(test_y, 2))),
+                all=(features_dim=(feat_dim, size(all_X, 2)), labels_dim=(label_dim, size(all_y, 2)))
+                )
 
         graphfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).graph.jld2")
         trainfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).train.jld2")
@@ -93,16 +94,6 @@ function read_graph(filename)
         data = u.load()
     """
     return Dict(py"data")
-end
-
-function to_simplegraph(data::Dict, num_V::Int)
-    g = SimpleGraph(num_V)
-    for (i, js) in data
-        for j in Set(js)
-            add_edge!(g, i, j)
-        end
-    end
-    g
 end
 
 struct Planetoid <: Dataset

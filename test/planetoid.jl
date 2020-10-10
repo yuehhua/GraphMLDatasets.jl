@@ -1,6 +1,6 @@
 @testset "planetoid" begin
     graph = graphdata(Planetoid(:cora))
-    @test typeof(graph) == SimpleGraph{Int64}
+    @test typeof(graph) == SimpleGraph{UInt32}
     @test nv(graph) == 2708
     @test ne(graph) == 5275
 
