@@ -30,16 +30,49 @@ function preprocess_reddit(local_path)
     y = Vector{Int32}(py"data['label']")
     ids = Vector{Int32}(py"data['node_ids']")
     types = Vector{Int32}(py"data['node_types']")
+    raw = Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids, :types=>types)
 
-    jld2file = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
-    @save jld2file graph X y ids types
+    sg = to_simplegraph(graph)
+    all_X = Matrix(X')
+    all_y = Matrix{UInt16}(y')
+    meta = (graph=(num_V=nv(sg), num_E=ne(sg)),
+            all=(features_dim=size(all_X), labels_dim=size(all_y))
+            )
+
+    graphfile = replace(local_path, "reddit.zip"=>"reddit.graph.jld2")
+    allfile = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
+    rawfile = replace(local_path, "reddit.zip"=>"reddit.raw.jld2")
+    metadatafile = replace(local_path, "reddit.zip"=>"reddit.metadata.jld2")
+
+    @save graphfile sg
+    @save allfile all_X all_y
+    @save rawfile raw
+    @save metadatafile meta
 end
 
 struct Reddit <: Dataset
 end
 
+function graphdata(::Reddit)
+    file = datadep"Reddit/reddit.graph.jld2"
+    @load file sg
+    sg
+end
+
 function alldata(::Reddit)
     file = datadep"Reddit/reddit.all.jld2"
-    @load file graph X y ids types
-    graph, X, y, ids, types
+    @load file all_X all_y
+    all_X, all_y
+end
+
+function rawdata(::Reddit)
+    file = datadep"Reddit/reddit.raw.jld2"
+    @load file raw
+    raw
+end
+
+function metadata(::Reddit)
+    file = datadep"Reddit/reddit.metadata.jld2"
+    @load file meta
+    meta
 end
