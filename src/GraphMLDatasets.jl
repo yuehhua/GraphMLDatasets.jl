@@ -17,7 +17,6 @@ module GraphMLDatasets
         Reddit,
         QM7b,
         Entities,
-        dataset,
         traindata,
         validdata,
         testdata,

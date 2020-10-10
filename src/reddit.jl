@@ -38,7 +38,7 @@ end
 struct Reddit <: Dataset
 end
 
-function dataset(::Reddit)
+function alldata(::Reddit)
     file = datadep"Reddit/reddit.all.jld2"
     @load file graph X y ids types
     graph, X, y, ids, types
