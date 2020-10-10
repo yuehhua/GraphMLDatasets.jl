@@ -7,7 +7,7 @@ module GraphMLDatasets
     using LightGraphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
     using MAT
     using PyCall
-    using SparseArrays: SparseMatrixCSC, sparse
+    using SparseArrays: SparseMatrixCSC, sparse, findnz
 
     export
         Dataset,
