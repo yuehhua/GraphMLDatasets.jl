@@ -15,15 +15,16 @@ function preprocess_qm7b(local_path)
     names = vars["names"]
     X = vars["X"]
     T = Matrix{Float32}(vars["T"])
+    raw = Dict(:names=>names, :X=>X, :T=>T)
 
-    jld2file = replace(local_path, "qm7b.mat"=>"qm7b.all.jld2")
-    @save jld2file names X T
+    rawfile = replace(local_path, "qm7b.mat"=>"qm7b.raw.jld2")
+    @save rawfile raw
 end
 
 struct QM7b <:Dataset end
 
-function alldata(::QM7b)
-    file = datadep"QM7b/qm7b.all.jld2"
-    @load file names X T
-    names, X, T
+function rawdata(::QM7b)
+    file = datadep"QM7b/qm7b.raw.jld2"
+    @load file raw
+    raw
 end
