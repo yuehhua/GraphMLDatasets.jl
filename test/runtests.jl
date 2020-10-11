@@ -1,6 +1,6 @@
 using GraphMLDatasets
-using LightGraphs: SimpleDiGraph, add_edge!, nv, ne
-using SparseArrays: SparseMatrixCSC
+using LightGraphs
+using SparseArrays
 using Test
 
 tests = [

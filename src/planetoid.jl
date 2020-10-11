@@ -23,17 +23,46 @@ function preprocess_planetoid(local_path)
         trainy_file = @datadep_str "Planetoid/ind.$(dataset).y"
         testX_file = @datadep_str "Planetoid/ind.$(dataset).tx"
         testy_file = @datadep_str "Planetoid/ind.$(dataset).ty"
+        allX_file = @datadep_str "Planetoid/ind.$(dataset).allx"
+        ally_file = @datadep_str "Planetoid/ind.$(dataset).ally"
 
         train_X = read_data(trainX_file)
         train_y = read_data(trainy_file)
         test_X = read_data(testX_file)
         test_y = read_data(testy_file)
+        all_X = read_data(allX_file)
+        all_y = read_data(ally_file)
         graph = read_graph(graph_file)
 
+        num_V = length(graph)
+        sg = to_simplegraph(graph, num_V)
+        num_E = ne(sg)
+        feat_dim = size(all_X, 2)
+        label_dim = size(all_y, 2)
+        train_X, train_y = sparse(train_X'), sparse(train_y')
+        test_X, test_y = sparse(test_X'), sparse(test_y')
+        all_X, all_y = sparse(all_X'), sparse(all_y')
+        raw = Dict(:graph=>graph, :train_X=>train_X, :train_y=>train_y,
+                   :test_X=>test_X, :test_y=>test_y, :all_X=>all_X, :all_y=>all_y)
+        meta = (graph=(num_V=num_V, num_E=num_E),
+                train=(features_dim=(feat_dim, size(train_X, 2)), labels_dim=(label_dim, size(train_y, 2))),
+                test=(features_dim=(feat_dim, size(test_X, 2)), labels_dim=(label_dim, size(test_y, 2))),
+                all=(features_dim=(feat_dim, size(all_X, 2)), labels_dim=(label_dim, size(all_y, 2)))
+                )
+
+        graphfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).graph.jld2")
         trainfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).train.jld2")
         testfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).test.jld2")
-        @save trainfile graph train_X train_y
-        @save testfile graph test_X test_y
+        allfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).all.jld2")
+        rawfile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).raw.jld2")
+        metadatafile = replace(graph_file, "ind.$(dataset).graph"=>"$(dataset).metadata.jld2")
+
+        @save graphfile sg
+        @save trainfile train_X train_y
+        @save testfile test_X test_y
+        @save allfile all_X all_y
+        @save rawfile raw
+        @save metadatafile meta
     end
 end
 
@@ -77,14 +106,38 @@ struct Planetoid <: Dataset
 end
 
 
+function graphdata(pla::Planetoid)
+    file = @datadep_str "Planetoid/$(pla.dataset).graph.jld2"
+    @load file sg
+    sg
+end
+
 function traindata(pla::Planetoid)
     file = @datadep_str "Planetoid/$(pla.dataset).train.jld2"
-    @load file graph train_X train_y
-    graph, train_X, train_y
+    @load file train_X train_y
+    train_X, train_y
 end
 
 function testdata(pla::Planetoid)
     file = @datadep_str "Planetoid/$(pla.dataset).test.jld2"
-    @load file graph test_X test_y
-    graph, test_X, test_y
+    @load file test_X test_y
+    test_X, test_y
+end
+
+function alldata(pla::Planetoid)
+    file = @datadep_str "Planetoid/$(pla.dataset).all.jld2"
+    @load file all_X all_y
+    all_X, all_y
+end
+
+function rawdata(pla::Planetoid)
+    file = @datadep_str "Planetoid/$(pla.dataset).raw.jld2"
+    @load file raw
+    raw
+end
+
+function metadata(pla::Planetoid)
+    file = @datadep_str "Planetoid/$(pla.dataset).metadata.jld2"
+    @load file meta
+    meta
 end
