@@ -16,6 +16,26 @@ function preprocess_reddit(local_path)
     graph_file = datadep"Reddit/reddit_graph.npz"
     data_file = datadep"Reddit/reddit_data.npz"
 
+    graphfile = replace(local_path, "reddit.zip"=>"reddit.graph.jld2")
+    allfile = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
+    rawfile = replace(local_path, "reddit.zip"=>"reddit.raw.jld2")
+    metadatafile = replace(local_path, "reddit.zip"=>"reddit.metadata.jld2")
+
+    graph, X, y = to_reddit_rawfile(graph_file, data_file, rawfile)
+
+    sg = to_simplegraph(graph)
+    all_X = Matrix(X')
+    all_y = Matrix{UInt16}(y')
+    meta = (graph=(num_V=nv(sg), num_E=ne(sg)),
+            all=(features_dim=size(all_X), labels_dim=size(all_y))
+            )
+
+    @save graphfile sg
+    @save allfile all_X all_y
+    @save metadatafile meta
+end
+
+function to_reddit_rawfile(graph_file, data_file, rawfile)
     py"""
     import numpy as np
     import scipy.sparse as sp
@@ -29,25 +49,12 @@ function preprocess_reddit(local_path)
     X = Matrix{Float32}(py"data['feature']")
     y = Vector{Int32}(py"data['label']")
     ids = Vector{Int32}(py"data['node_ids']")
-    types = Vector{Int32}(py"data['node_types']")
+    types = Vector{UInt8}(py"data['node_types']")
     raw = Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids, :types=>types)
 
-    sg = to_simplegraph(graph)
-    all_X = Matrix(X')
-    all_y = Matrix{UInt16}(y')
-    meta = (graph=(num_V=nv(sg), num_E=ne(sg)),
-            all=(features_dim=size(all_X), labels_dim=size(all_y))
-            )
-
-    graphfile = replace(local_path, "reddit.zip"=>"reddit.graph.jld2")
-    allfile = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
-    rawfile = replace(local_path, "reddit.zip"=>"reddit.raw.jld2")
-    metadatafile = replace(local_path, "reddit.zip"=>"reddit.metadata.jld2")
-
-    @save graphfile sg
-    @save allfile all_X all_y
     @save rawfile raw
-    @save metadatafile meta
+
+    graph, X, y
 end
 
 struct Reddit <: Dataset
