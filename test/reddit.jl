@@ -15,7 +15,7 @@
     @test typeof(raw[:X]) == Matrix{Float32}
     @test typeof(raw[:y]) == Vector{Int32}
     @test typeof(raw[:ids]) == Vector{Int32}
-    @test typeof(raw[:types]) == Vector{Int32}
+    @test typeof(raw[:types]) == Vector{UInt8}
 
     meta = metadata(Reddit())
     @test meta.graph.num_V == nv(graph)
