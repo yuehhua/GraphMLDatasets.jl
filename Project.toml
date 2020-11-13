@@ -15,9 +15,9 @@ PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-CSV = "0.7"
+CSV = "0.7 - 0.8"
 DataDeps = "0.7"
-HTTP = "0.8"
+HTTP = "0.8 - 0.9"
 JLD2 = "0.2"
 JSON = "0.21"
 LightGraphs = "1.3"
