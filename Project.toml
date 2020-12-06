@@ -1,7 +1,7 @@
 name = "GraphMLDatasets"
 uuid = "21828b05-d3b3-40ad-870e-a4bc2f52d5e8"
 authors = ["Yueh-Hua Tu"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
