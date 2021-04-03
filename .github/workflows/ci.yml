@@ -13,7 +13,8 @@ jobs:
       matrix:
         version:
           - '1.5'
-          - 'nightly'
+          - '1.6'
+          # - 'nightly'
         os:
           - ubuntu-latest
           - macOS-latest
@@ -70,11 +71,6 @@ jobs:
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
-      - run: |
-          julia --project=docs -e '
-            using Documenter: doctest
-            using GraphMLDatasets
-            doctest(GraphMLDatasets)'
       - run: julia --project=docs docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
