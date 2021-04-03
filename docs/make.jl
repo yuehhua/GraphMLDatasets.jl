@@ -8,7 +8,7 @@ makedocs(;
     sitename="GraphMLDatasets.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://yuehhua.github.io/GraphMLDatasets.jl",
+        canonical="https://yuehhua.github.io/GraphMLDatasets.jl/stable/",
         assets=String[],
     ),
     pages=[
@@ -18,4 +18,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/yuehhua/GraphMLDatasets.jl",
+    target = "build",
 )
