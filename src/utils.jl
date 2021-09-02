@@ -38,3 +38,10 @@ function to_simpledigraph(data::SparseMatrixCSC)
     end
     g
 end
+
+read_npzfile(npzfile::String) = ZipFile.Reader(npzfile)
+
+function read_npzarray(reader, index::String)
+    i = findfirst(x -> x.name == (index * ".npy"), reader.files)
+    return NPZ.npzreadarray(reader.files[i])
+end

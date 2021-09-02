@@ -70,18 +70,21 @@ end
 
 function dataset_preprocess(dataset::Type{Cora})
     return function preprocess(local_path)
-        py"""
-        import numpy as np
-        data = np.load($local_path, allow_pickle=True)
-        """
-        mA, nA = data["adj_shape"]
-        nzA, colptrA, rowvalA = Pickle.csr_to_csc(mA, nA, data["adj_data"], data["adj_indptr"], data["adj_indices"])
-        mX, nX = data["attr_shape"]
-        nzX, colptrX, rowvalX = Pickle.csr_to_csc(mX, nX, data["attr_data"], data["attr_indptr"], data["attr_indices"])
+        reader = read_npzfile(local_path)
+        mA, nA = read_npzarray(reader, "adj_shape")
+        adj_data = read_npzarray(reader, "adj_data")
+        adj_indptr = read_npzarray(reader, "adj_indptr")
+        adj_indices = read_npzarray(reader, "adj_indices")
+        mX, nX = read_npzarray(reader, "attr_shape")
+        attr_data = read_npzarray(reader, "attr_data")
+        attr_indptr = read_npzarray(reader, "attr_indptr")
+        attr_indices = read_npzarray(reader, "attr_indices")
 
+        nzA, colptrA, rowvalA = Pickle.csr_to_csc(mA, nA, adj_data, adj_indptr, adj_indices)
+        nzX, colptrX, rowvalX = Pickle.csr_to_csc(mX, nX, attr_data, attr_indptr, attr_indices)
         graph = SparseMatrixCSC(mA, nA, colptrA, rowvalA, nzA)
         X = SparseMatrixCSC(mX, nX, colptrX, rowvalX, nzX)
-        y = data["labels"]
+        y = read_npzarray(reader, "labels")
         raw = Dict(:graph=>graph, :all_X=>X, :all_y=>y)
     
         all_X = sparse(X')

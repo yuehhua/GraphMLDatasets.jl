@@ -9,24 +9,10 @@ module GraphMLDatasets
     using JSON
     using LightGraphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
     using MAT
+    using NPZ
     using Pickle
     using PyCall
-
-    export
-        Dataset,
-        Planetoid,
-        Cora,
-        PPI,
-        Reddit,
-        QM7b,
-        Entities,
-        traindata,
-        validdata,
-        testdata,
-        graphdata,
-        rawdata,
-        alldata,
-        metadata
+    using ZipFile
 
     include("dataset.jl")
     include("preprocess.jl")
