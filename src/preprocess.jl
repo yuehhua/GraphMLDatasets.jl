@@ -50,22 +50,7 @@ function dataset_preprocess(dataset::Type{Planetoid})
     end
 end
 
-function read_data(filename)
-    py"""
-    import pickle
-    from scipy.sparse import csr_matrix
-
-    with open($filename,"rb") as f:
-        u = pickle._Unpickler(f)
-        u.encoding = "latin1"
-        data = u.load()
-
-    if type(data) is csr_matrix:
-        data = data.toarray()
-    """
-    return SparseMatrixCSC(Array(py"data"))
-end
-
+read_data(filename) = Pickle.npyload(filename)
 read_index(filename) = map(x -> parse(Int64, x), readlines(filename))
 
 function read_graph(filename)
@@ -87,15 +72,16 @@ function dataset_preprocess(dataset::Type{Cora})
     return function preprocess(local_path)
         py"""
         import numpy as np
-        import scipy.sparse as sp
         data = np.load($local_path, allow_pickle=True)
-        A = sp.csr_matrix((data['adj_data'], data['adj_indices'], data['adj_indptr']), shape=data['adj_shape'])
-        X = sp.csr_matrix((data['attr_data'], data['attr_indices'], data['attr_indptr']), shape=data['attr_shape'])
         """
-    
-        graph = SparseMatrixCSC(Array(py"A.toarray()"))
-        X = SparseMatrixCSC(Array(py"X.toarray()"))
-        y = py"data['labels']"
+        mA, nA = data["adj_shape"]
+        nzA, colptrA, rowvalA = Pickle.csr_to_csc(mA, nA, data["adj_data"], data["adj_indptr"], data["adj_indices"])
+        mX, nX = data["attr_shape"]
+        nzX, colptrX, rowvalX = Pickle.csr_to_csc(mX, nX, data["attr_data"], data["attr_indptr"], data["attr_indices"])
+
+        graph = SparseMatrixCSC(mA, nA, colptrA, rowvalA, nzA)
+        X = SparseMatrixCSC(mX, nX, colptrX, rowvalX, nzX)
+        y = data["labels"]
         raw = Dict(:graph=>graph, :all_X=>X, :all_y=>y)
     
         all_X = sparse(X')
