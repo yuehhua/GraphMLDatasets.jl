@@ -22,14 +22,14 @@
     @test typeof(all_y) == SparseMatrixCSC{Int32,Int64}
     @test size(all_y) == (7, 1708)
 
-    raw = rawdata(Planetoid(), :cora)
-    @test typeof(raw[:graph]) == Dict{Any,Any}
-    @test typeof(raw[:train_X]) == SparseMatrixCSC{Float32,Int64}
-    @test typeof(raw[:train_y]) == SparseMatrixCSC{Int32,Int64}
-    @test typeof(raw[:test_X]) == SparseMatrixCSC{Float32,Int64}
-    @test typeof(raw[:test_y]) == SparseMatrixCSC{Int32,Int64}
-    @test typeof(raw[:all_X]) == SparseMatrixCSC{Float32,Int64}
-    @test typeof(raw[:all_y]) == SparseMatrixCSC{Int32,Int64}
+    g, train_X, train_y, test_X, test_y, all_X, all_y = rawdata(Planetoid(), :cora)
+    # @test g isa DataStructures.DefaultDict
+    @test train_X isa SparseMatrixCSC{Float32,Int64}
+    @test train_y isa SparseMatrixCSC{Int32,Int64}
+    @test test_X isa SparseMatrixCSC{Float32,Int64}
+    @test test_y isa SparseMatrixCSC{Int32,Int64}
+    @test all_X isa SparseMatrixCSC{Float32,Int64}
+    @test all_y isa SparseMatrixCSC{Int32,Int64}
 
     meta = metadata(Planetoid(), :cora)
     @test meta.graph.num_V == nv(graph)

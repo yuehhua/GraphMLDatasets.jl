@@ -9,13 +9,13 @@ function dataset_preprocess(dataset::Type{Planetoid})
             allX_file = @datadep_str "Planetoid/ind.$(subds).allx"
             ally_file = @datadep_str "Planetoid/ind.$(subds).ally"
     
-            train_X = read_data(trainX_file)
-            train_y = read_data(trainy_file)
-            test_X = read_data(testX_file)
-            test_y = read_data(testy_file)
-            all_X = read_data(allX_file)
-            all_y = read_data(ally_file)
-            graph = read_graph(graph_file)
+            train_X = Pickle.npyload(trainX_file)
+            train_y = Pickle.npyload(trainy_file)
+            test_X = Pickle.npyload(testX_file)
+            test_y = Pickle.npyload(testy_file)
+            all_X = Pickle.npyload(allX_file)
+            all_y = Pickle.npyload(ally_file)
+            graph = Pickle.npyload(graph_file)
     
             num_V = length(graph)
             sg = to_simplegraph(graph, num_V)
@@ -25,8 +25,8 @@ function dataset_preprocess(dataset::Type{Planetoid})
             train_X, train_y = sparse(train_X'), sparse(train_y')
             test_X, test_y = sparse(test_X'), sparse(test_y')
             all_X, all_y = sparse(all_X'), sparse(all_y')
-            raw = Dict(:graph=>graph, :train_X=>train_X, :train_y=>train_y,
-                       :test_X=>test_X, :test_y=>test_y, :all_X=>all_X, :all_y=>all_y)
+            raw = Dict("graph"=>graph, "train_X"=>train_X, "train_y"=>train_y,
+                       "test_X"=>test_X, "test_y"=>test_y, "all_X"=>all_X, "all_y"=>all_y)
             meta = (graph=(num_V=num_V, num_E=num_E),
                     train=(features_dim=(feat_dim, size(train_X, 2)), labels_dim=(label_dim, size(train_y, 2))),
                     test=(features_dim=(feat_dim, size(test_X, 2)), labels_dim=(label_dim, size(test_y, 2))),
@@ -40,30 +40,17 @@ function dataset_preprocess(dataset::Type{Planetoid})
             rawfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).raw.jld2")
             metadatafile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).metadata.jld2")
     
-            save(graphfile, :sg, sg)
-            save(trainfile, :train_X, train_X, :train_y, train_y)
-            save(testfile, :test_X, test_X, :test_y, test_y)
-            save(allfile, :all_X, all_X, :all_y, all_y)
-            save(rawfile, raw)
-            save(metadatafile, meta)
+            JLD2.save(graphfile, "sg", sg)
+            JLD2.save(trainfile, "train_X", train_X, "train_y", train_y)
+            JLD2.save(testfile, "test_X", test_X, "test_y", test_y)
+            JLD2.save(allfile, "all_X", all_X, "all_y", all_y)
+            JLD2.save(rawfile, raw)
+            JLD2.save(metadatafile, "meta", meta)
         end
     end
 end
 
-read_data(filename) = Pickle.npyload(filename)
 read_index(filename) = map(x -> parse(Int64, x), readlines(filename))
-
-function read_graph(filename)
-    py"""
-    import pickle
-
-    with open($filename,"rb") as f:
-        u = pickle._Unpickler(f)
-        u.encoding = "latin1"
-        data = u.load()
-    """
-    return Dict(py"data")
-end
 
 
 ## Cora dataset
@@ -73,12 +60,12 @@ function dataset_preprocess(dataset::Type{Cora})
         reader = ZipFile.Reader(local_path)
         mA, nA = read_npzarray(reader, "adj_shape")
         adj_data = read_npzarray(reader, "adj_data")
-        adj_indptr = read_npzarray(reader, "adj_indptr")
-        adj_indices = read_npzarray(reader, "adj_indices")
+        adj_indptr = read_npzarray(reader, "adj_indptr") .+ 1
+        adj_indices = read_npzarray(reader, "adj_indices") .+ 1
         mX, nX = read_npzarray(reader, "attr_shape")
         attr_data = read_npzarray(reader, "attr_data")
-        attr_indptr = read_npzarray(reader, "attr_indptr")
-        attr_indices = read_npzarray(reader, "attr_indices")
+        attr_indptr = read_npzarray(reader, "attr_indptr") .+ 1
+        attr_indices = read_npzarray(reader, "attr_indices") .+ 1
 
         nzA, colptrA, rowvalA = Pickle.csr_to_csc(mA, nA, adj_data, adj_indptr, adj_indices)
         nzX, colptrX, rowvalX = Pickle.csr_to_csc(mX, nX, attr_data, attr_indptr, attr_indices)
@@ -100,12 +87,12 @@ function dataset_preprocess(dataset::Type{Cora})
         rawfile = replace(local_path, "cora.npz"=>"cora.raw.jld2")
         metadatafile = replace(local_path, "cora.npz"=>"cora.metadata.jld2")
     
-        save(graphfile, :sg, sg)
-        # save(trainfile, :train_X, train_X, :train_y, train_y)
-        # save(testfile, :test_X, test_X, :test_y, test_y)
-        save(allfile, Dict(:all_X=>all_X, :all_y=>all_y))
-        save(rawfile, Dict(:graph=>graph, :all_X=>X, :all_y=>y))
-        save(metadatafile, meta)
+        JLD2.save(graphfile, "sg", sg)
+        # JLD2.save(trainfile, "train_X", train_X, "train_y", train_y)
+        # JLD2.save(testfile, "test_X", test_X, "test_y", test_y)
+        JLD2.save(allfile, Dict("all_X"=>all_X, "all_y"=>all_y))
+        JLD2.save(rawfile, Dict("graph"=>graph, "all_X"=>X, "all_y"=>y))
+        JLD2.save(metadatafile, "meta", meta)
     end
 end
 
@@ -128,7 +115,7 @@ function dataset_preprocess(dataset::Type{PPI})
             graph = read_ppi_graph(graph_file)
 
             jld2file = replace(local_path, "ppi.zip"=>"ppi.$(phase).jld2")
-            save(jld2file, Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids))
+            JLD2.save(jld2file, Dict("graph"=>graph, "X"=>X, "y"=>y, "ids"=>ids))
         end
     end
 end
@@ -167,9 +154,9 @@ function dataset_preprocess(dataset::Type{Reddit})
                 all=(features_dim=size(all_X), labels_dim=size(all_y))
                 )
 
-        save(graphfile, :sg, sg)
-        save(allfile, :all_X, all_X, :all_y, all_y)
-        save(metadatafile, :meta, meta)
+        JLD2.save(graphfile, "sg", sg)
+        JLD2.save(allfile, "all_X", all_X, "all_y", all_y)
+        JLD2.save(metadatafile, "meta", meta)
     end
 end
 
@@ -180,7 +167,7 @@ function to_reddit_rawfile(graph_file, data_file, rawfile)
     y = Vector{Int32}(read_npzarray(reader, "label"))
     ids = Vector{Int32}(read_npzarray(reader, "node_ids"))
     types = Vector{UInt8}(read_npzarray(reader, "node_types"))
-    save(rawfile, Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids, :types=>types))
+    JLD2.save(rawfile, Dict("graph"=>graph, "X"=>X, "y"=>y, "ids"=>ids, "types"=>types))
 
     graph, X, y
 end
@@ -204,7 +191,7 @@ function dataset_preprocess(dataset::Type{QM7b})
         T = Matrix{Float32}(vars["T"])
 
         rawfile = replace(local_path, "qm7b.mat"=>"qm7b.raw.jld2")
-        save(rawfile, Dict(:names=>names, :X=>X, :T=>T))
+        JLD2.save(rawfile, Dict("names"=>names, "X"=>X, "T"=>T))
     end
 end
 
@@ -235,4 +222,36 @@ function dataset_preprocess(dataset::Type{Entities})
             # uri = HTTP.URI("http://data.bgs.ac.uk/id/Geochronology/Division/CN")
         end
     end
+end
+
+
+## OGBNProteins dataset
+
+function dataset_preprocess(dataset::Type{OGBNProteins})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "proteins")
+        V, E, edges = read_graph(reader, "proteins/raw")
+        edge_feat = read_edge_feat(dataset, reader, "proteins/raw")
+        node_label = read_node_label(dataset, reader, "proteins/raw")
+        graph = to_simplegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "proteins.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "proteins.zip"=>"graph.jld2")
+        featfile = replace(local_path, "proteins.zip"=>"edge_feat.jld2")
+        labelfile = replace(local_path, "proteins.zip"=>"node_label.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(featfile, "edge_feat", edge_feat)
+        JLD2.save(labelfile, "node_label", node_label)
+    end
+end
+
+function read_node_species(reader, prefix::String)
+    filename = joinpath(prefix, "node_species.csv.gz")
+    file = filter(x -> x.name == filename, reader.files)[1]
+    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:species]) |> DataFrame
+    return df
 end

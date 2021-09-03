@@ -10,6 +10,7 @@ tests = [
     "reddit",
     "qm7b",
     "entities",
+    "ogb",
     "utils",
 ]
 

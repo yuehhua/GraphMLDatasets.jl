@@ -7,7 +7,10 @@ export
     QM7b,
     Entities,
     OGBNProteins,
-    OGBNProducts
+    OGBNProducts,
+    OGBNArxiv,
+    OGBNMag,
+    OGBNPapers100M
 
 
 abstract type Dataset end

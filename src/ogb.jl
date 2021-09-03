@@ -96,6 +96,8 @@ function read_edges(reader, prefix::String)
     filename = joinpath(prefix, "edge.csv.gz")
     file = filter(x -> x.name == filename, reader.files)[1]
     df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:node1, :node2]) |> DataFrame
+    df.node1 .+= 1
+    df.node2 .+= 1
     return df
 end
 
@@ -103,19 +105,15 @@ end
 # read features and labels
 
 function read_node_label(dataset::Type{<:OGBDataset}, reader, prefix::String)
-    dim = num_tasks(dataset)
     filename = joinpath(prefix, "node-label.csv.gz")
     file = filter(x -> x.name == filename, reader.files)[1]
-    header = [Symbol("label$i") for i in 1:dim]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=header) |> DataFrame
-    return df
+    df = CSV.File(transcode(GzipDecompressor, read(file)); header=false) |> DataFrame
+    return Matrix{UInt16}(df)
 end
 
 function read_edge_feat(dataset::Type{<:OGBDataset}, reader, prefix::String)
-    dim = feature_dim(dataset, :edge)
     filename = joinpath(prefix, "edge-feat.csv.gz")
     file = filter(x -> x.name == filename, reader.files)[1]
-    header = [Symbol("feat$i") for i in 1:dim]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=header) |> DataFrame
-    return df
+    df = CSV.File(transcode(GzipDecompressor, read(file)); header=false) |> DataFrame
+    return Matrix{Float32}(df)
 end

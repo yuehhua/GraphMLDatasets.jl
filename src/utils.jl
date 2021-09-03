@@ -7,7 +7,7 @@ function unzip_tgz(src::String, dest::String)
     run(`tar zxf $src -C $dest`)
 end
 
-function to_simplegraph(data::Dict, num_V::Int)
+function to_simplegraph(data::AbstractDict, num_V::Int)
     g = SimpleGraph{UInt32}(num_V)
     for (i, js) in data
         for j in Set(js)
@@ -26,6 +26,14 @@ function to_simplegraph(data::SparseMatrixCSC)
         end
     end
     g
+end
+
+function to_simplegraph(edges::DataFrame, num_V::Integer)
+    g = SimpleGraph{Int32}(num_V)
+    for row in eachrow(edges)
+        add_edge!(g, row.node1, row.node2)
+    end
+    return g
 end
 
 function to_simpledigraph(data::SparseMatrixCSC)
