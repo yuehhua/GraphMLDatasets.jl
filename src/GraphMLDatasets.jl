@@ -2,8 +2,10 @@ module GraphMLDatasets
     using InteractiveUtils: subtypes
     using SparseArrays: SparseMatrixCSC, sparse, findnz
 
-    using CSV
+    using CSV, DataFrames
+    using CodecZlib
     using DataDeps: DataDep, register, @datadep_str
+    using FileIO
     using HTTP
     using JLD2
     using JSON
@@ -15,6 +17,7 @@ module GraphMLDatasets
     using ZipFile
 
     include("dataset.jl")
+    include("ogb.jl")
     include("preprocess.jl")
     include("interfaces.jl")
     include("utils.jl")

@@ -40,12 +40,12 @@ function dataset_preprocess(dataset::Type{Planetoid})
             rawfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).raw.jld2")
             metadatafile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).metadata.jld2")
     
-            @save graphfile sg
-            @save trainfile train_X train_y
-            @save testfile test_X test_y
-            @save allfile all_X all_y
-            @save rawfile raw
-            @save metadatafile meta
+            save(graphfile, :sg, sg)
+            save(trainfile, :train_X, train_X, :train_y, train_y)
+            save(testfile, :test_X, test_X, :test_y, test_y)
+            save(allfile, :all_X, all_X, :all_y, all_y)
+            save(rawfile, raw)
+            save(metadatafile, meta)
         end
     end
 end
@@ -70,7 +70,7 @@ end
 
 function dataset_preprocess(dataset::Type{Cora})
     return function preprocess(local_path)
-        reader = read_npzfile(local_path)
+        reader = ZipFile.Reader(local_path)
         mA, nA = read_npzarray(reader, "adj_shape")
         adj_data = read_npzarray(reader, "adj_data")
         adj_indptr = read_npzarray(reader, "adj_indptr")
@@ -85,7 +85,6 @@ function dataset_preprocess(dataset::Type{Cora})
         graph = SparseMatrixCSC(mA, nA, colptrA, rowvalA, nzA)
         X = SparseMatrixCSC(mX, nX, colptrX, rowvalX, nzX)
         y = read_npzarray(reader, "labels")
-        raw = Dict(:graph=>graph, :all_X=>X, :all_y=>y)
     
         all_X = sparse(X')
         all_y = Matrix{UInt16}(y')
@@ -101,12 +100,12 @@ function dataset_preprocess(dataset::Type{Cora})
         rawfile = replace(local_path, "cora.npz"=>"cora.raw.jld2")
         metadatafile = replace(local_path, "cora.npz"=>"cora.metadata.jld2")
     
-        @save graphfile sg
-        # @save trainfile train_X train_y
-        # @save testfile test_X test_y
-        @save allfile all_X all_y
-        @save rawfile raw
-        @save metadatafile meta
+        save(graphfile, :sg, sg)
+        # save(trainfile, :train_X, train_X, :train_y, train_y)
+        # save(testfile, :test_X, test_X, :test_y, test_y)
+        save(allfile, Dict(:all_X=>all_X, :all_y=>all_y))
+        save(rawfile, Dict(:graph=>graph, :all_X=>X, :all_y=>y))
+        save(metadatafile, meta)
     end
 end
 
@@ -123,20 +122,13 @@ function dataset_preprocess(dataset::Type{PPI})
             X_file = @datadep_str "PPI/$(phase)_feats.npy"
             y_file = @datadep_str "PPI/$(phase)_labels.npy"
 
-            py"""
-            import numpy as np
-            ids = np.load($id_file)
-            X = np.load($X_file)
-            y = np.load($y_file)
-            """
-
-            X = Matrix{Float32}(py"X")
-            y = SparseMatrixCSC{Int32,Int64}(Array(py"y"))
-            ids = Array(py"ids")
+            ids = NPZ.npzread(id_file)
+            X = Matrix{Float32}(NPZ.npzread(X_file))
+            y = SparseMatrixCSC{Int32,Int64}(NPZ.npzread(y_file))
             graph = read_ppi_graph(graph_file)
 
             jld2file = replace(local_path, "ppi.zip"=>"ppi.$(phase).jld2")
-            @save jld2file graph X y ids
+            save(jld2file, Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids))
         end
     end
 end
@@ -175,36 +167,34 @@ function dataset_preprocess(dataset::Type{Reddit})
                 all=(features_dim=size(all_X), labels_dim=size(all_y))
                 )
 
-        @save graphfile sg
-        @save allfile all_X all_y
-        @save metadatafile meta
+        save(graphfile, :sg, sg)
+        save(allfile, :all_X, all_X, :all_y, all_y)
+        save(metadatafile, :meta, meta)
     end
 end
 
 function to_reddit_rawfile(graph_file, data_file, rawfile)
-    py"""
-    import numpy as np
-    import scipy.sparse as sp
-    graph = np.load($graph_file, allow_pickle=True)
-    data = np.load($data_file, allow_pickle=True)
-    """
-
-    graph = sparse(Vector(py"graph['row']") .+ 1,
-                   Vector(py"graph['col']") .+ 1,
-                   Vector{Int32}(py"graph['data']"))
-    X = Matrix{Float32}(py"data['feature']")
-    y = Vector{Int32}(py"data['label']")
-    ids = Vector{Int32}(py"data['node_ids']")
-    types = Vector{UInt8}(py"data['node_types']")
-    raw = Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids, :types=>types)
-
-    @save rawfile raw
+    reader = ZipFile.Reader(data_file)
+    graph = read_reddit_graph(graph_file)
+    X = Matrix{Float32}(read_npzarray(reader, "feature"))
+    y = Vector{Int32}(read_npzarray(reader, "label"))
+    ids = Vector{Int32}(read_npzarray(reader, "node_ids"))
+    types = Vector{UInt8}(read_npzarray(reader, "node_types"))
+    save(rawfile, Dict(:graph=>graph, :X=>X, :y=>y, :ids=>ids, :types=>types))
 
     graph, X, y
 end
 
+function read_reddit_graph(graph_file)
+    reader = ZipFile.Reader(graph_file)
+    row = read_npzarray(reader, "row") .+ 1
+    col = read_npzarray(reader, "col") .+ 1
+    data = read_npzarray(reader, "data")
+    return sparse(row, col, data)
+end
 
-## Reddit dataset
+
+## QM7b dataset
 
 function dataset_preprocess(dataset::Type{QM7b})
     return function preprocess(local_path)
@@ -212,10 +202,9 @@ function dataset_preprocess(dataset::Type{QM7b})
         names = vars["names"]
         X = vars["X"]
         T = Matrix{Float32}(vars["T"])
-        raw = Dict(:names=>names, :X=>X, :T=>T)
 
         rawfile = replace(local_path, "qm7b.mat"=>"qm7b.raw.jld2")
-        @save rawfile raw
+        save(rawfile, Dict(:names=>names, :X=>X, :T=>T))
     end
 end
 

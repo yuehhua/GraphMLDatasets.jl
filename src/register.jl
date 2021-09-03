@@ -1,4 +1,5 @@
-datasets() = subtypes(Dataset)
+# datasets() = filter(isconcretetype, subtypes(Dataset))
+datasets() = [Planetoid, Cora, PPI, Reddit, QM7b, Entities, OGBNProteins]
 
 function init_dataset(dataset::Type{<:Dataset})
     register(DataDep(
