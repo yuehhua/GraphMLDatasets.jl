@@ -254,6 +254,6 @@ dataset_checksum(::Type{QM7b}) = "e2a9d670d86eba769fa7b5eadeb592184067d2ec12468b
 dataset_checksum(::Type{Entities}) = "e58bcfddd240d9bbc830bcae74e9854f1f778a96d3072930395f47d3c8e6f342"
 dataset_checksum(::Type{OGBNProteins}) = "1cd3113dc2a6f0c87a549332b77d78be45cf99804c254c18d9c72029164a0859"
 dataset_checksum(::Type{OGBNProducts}) = "5ea0a112edaec2141c0a2a612dd4aed58df97ff3e1ab1a0ca8238f43cbbb50a8"
-dataset_checksum(::Type{OGBNArxiv}) = "xxx"
+dataset_checksum(::Type{OGBNArxiv}) = "49f85c801589ecdcc52cfaca99693aaea7b8af16a9ac3f41dd85a5f3193fe276"
 dataset_checksum(::Type{OGBNMag}) = "xxx"
 dataset_checksum(::Type{OGBNPapers100M}) = "xxx"

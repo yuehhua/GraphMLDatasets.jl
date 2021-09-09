@@ -62,7 +62,22 @@
     end
 
     @testset "OGBNArxiv" begin
+        @test length(train_indices(OGBNArxiv())) == 90941
+        @test length(valid_indices(OGBNArxiv())) == 29799
+        @test length(test_indices(OGBNArxiv())) == 48603
 
+        graph = graphdata(OGBNArxiv())
+        @test graph isa SimpleDiGraph{Int32}
+        @test nv(graph) == 169343
+        @test ne(graph) == 1166243
+
+        nf = node_features(OGBNArxiv())
+        @test nf isa Matrix{Float32}
+        @test size(nf) == (nv(graph), 128)
+
+        nl = node_labels(OGBNArxiv())
+        @test nl isa Matrix{UInt16}
+        @test size(nl) == (nv(graph), GraphMLDatasets.num_tasks(OGBNArxiv))
     end
 
     @testset "OGBNMag" begin
