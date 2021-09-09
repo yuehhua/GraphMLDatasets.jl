@@ -36,34 +36,34 @@ split_prefix(::Type{OGBNPapers100M}) = "time"
 
 # read indices
 
-function read_indices(obg::Type{<:OGBDataset}, reader, prefix::String)
-    prefix = joinpath(prefix, "split", split_prefix(obg))
+function read_indices(obg::Type{<:OGBDataset}, reader, dir::String)
+    prefix = joinpath(dir, "split", split_prefix(obg))
     train_indices = read_train_indices(reader, prefix)
     valid_indices = read_valid_indices(reader, prefix)
     test_indices = read_test_indices(reader, prefix)
     return train_indices, valid_indices, test_indices
 end
 
-function read_train_indices(reader, prefix::String)
-    filename = joinpath(prefix, "train.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:index]) |> DataFrame
+function read_train_indices(reader, dir::String)
+    filename = joinpath(dir, "train.csv.gz")
+    header = [:index]
+    df = read_zipfile(reader, filename, header)
     df.index .+= 1
     return df.index
 end
 
-function read_valid_indices(reader, prefix::String)
-    filename = joinpath(prefix, "valid.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:index]) |> DataFrame
+function read_valid_indices(reader, dir::String)
+    filename = joinpath(dir, "valid.csv.gz")
+    header = [:index]
+    df = read_zipfile(reader, filename, header)
     df.index .+= 1
     return df.index
 end
 
-function read_test_indices(reader, prefix::String)
-    filename = joinpath(prefix, "test.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:index]) |> DataFrame
+function read_test_indices(reader, dir::String)
+    filename = joinpath(dir, "test.csv.gz")
+    header = [:index]
+    df = read_zipfile(reader, filename, header)
     df.index .+= 1
     return df.index
 end
@@ -71,31 +71,31 @@ end
 
 # read graph and metadata
 
-function read_graph(reader, prefix::String)
-    V = read_num_node(reader, prefix)
-    E = read_num_edge(reader, prefix)
-    edges = read_edges(reader, prefix)
+function read_graph(reader, dir::String)
+    V = read_num_node(reader, dir)
+    E = read_num_edge(reader, dir)
+    edges = read_edges(reader, dir)
     return V, E, edges
 end
 
-function read_num_node(reader, prefix::String)
-    filename = joinpath(prefix, "num-node-list.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:number]) |> DataFrame
+function read_num_node(reader, dir::String)
+    filename = joinpath(dir, "num-node-list.csv.gz")
+    header = [:number]
+    df = read_zipfile(reader, filename, header)
     return df.number[1]
 end
 
-function read_num_edge(reader, prefix::String)
-    filename = joinpath(prefix, "num-edge-list.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:number]) |> DataFrame
+function read_num_edge(reader, dir::String)
+    filename = joinpath(dir, "num-edge-list.csv.gz")
+    header = [:number]
+    df = read_zipfile(reader, filename, header)
     return df.number[1]
 end
 
-function read_edges(reader, prefix::String)
-    filename = joinpath(prefix, "edge.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:node1, :node2]) |> DataFrame
+function read_edges(reader, dir::String)
+    filename = joinpath(dir, "edge.csv.gz")
+    header = [:node1, :node2]
+    df = read_zipfile(reader, filename, header)
     df.node1 .+= 1
     df.node2 .+= 1
     return df
@@ -104,16 +104,16 @@ end
 
 # read features and labels
 
-function read_node_label(dataset::Type{<:OGBDataset}, reader, prefix::String)
-    filename = joinpath(prefix, "node-label.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=false) |> DataFrame
+function read_labels(dataset::Type{<:OGBDataset}, reader, dir::String, csv_prefix::String)
+    filename = joinpath(dir, csv_prefix * "-label.csv.gz")
+    header = false
+    df = read_zipfile(reader, filename, header)
     return Matrix{UInt16}(df)
 end
 
-function read_edge_feat(dataset::Type{<:OGBDataset}, reader, prefix::String)
-    filename = joinpath(prefix, "edge-feat.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=false) |> DataFrame
+function read_features(dataset::Type{<:OGBDataset}, reader, dir::String, csv_prefix::String)
+    filename = joinpath(dir, csv_prefix * "-feat.csv.gz")
+    header = false
+    df = read_zipfile(reader, filename, header)
     return Matrix{Float32}(df)
 end

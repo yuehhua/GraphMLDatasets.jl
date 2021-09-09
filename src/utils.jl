@@ -51,3 +51,9 @@ function read_npzarray(reader, index::String)
     i = findfirst(x -> x.name == (index * ".npy"), reader.files)
     return NPZ.npzreadarray(reader.files[i])
 end
+
+function read_zipfile(reader, filename::String, header)
+    file = filter(x -> x.name == filename, reader.files)[1]
+    df = CSV.File(transcode(GzipDecompressor, read(file)); header=header) |> DataFrame
+    return df
+end

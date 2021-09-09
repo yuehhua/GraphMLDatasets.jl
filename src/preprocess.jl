@@ -232,8 +232,8 @@ function dataset_preprocess(dataset::Type{OGBNProteins})
         reader = ZipFile.Reader(local_path)
         train_indices, valid_indices, test_indices = read_indices(dataset, reader, "proteins")
         V, E, edges = read_graph(reader, "proteins/raw")
-        edge_feat = read_edge_feat(dataset, reader, "proteins/raw")
-        node_label = read_node_label(dataset, reader, "proteins/raw")
+        edge_feat = read_features(dataset, reader, "proteins/raw", "edge")
+        node_label = read_labels(dataset, reader, "proteins/raw", "node")
         graph = to_simplegraph(edges, V)
         indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
 
@@ -254,4 +254,104 @@ function read_node_species(reader, prefix::String)
     file = filter(x -> x.name == filename, reader.files)[1]
     df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:species]) |> DataFrame
     return df
+end
+
+
+## OGBNProducts dataset
+
+function dataset_preprocess(dataset::Type{OGBNProducts})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "products")
+        V, E, edges = read_graph(reader, "products/raw")
+        node_feat = read_features(dataset, reader, "products/raw", "node")
+        node_label = read_labels(dataset, reader, "products/raw", "node")
+        graph = to_simplegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "products.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "products.zip"=>"graph.jld2")
+        featfile = replace(local_path, "products.zip"=>"node_feat.jld2")
+        labelfile = replace(local_path, "products.zip"=>"node_label.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(featfile, "node_feat", node_feat)
+        JLD2.save(labelfile, "node_label", node_label)
+    end
+end
+
+
+## OGBNArxiv dataset
+
+function dataset_preprocess(dataset::Type{OGBNArxiv})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        # train_indices, valid_indices, test_indices = read_indices(dataset, reader, "products")
+        # V, E, edges = read_graph(reader, "products/raw")
+        # edge_feat = read_edge_feat(dataset, reader, "products/raw")
+        # node_label = read_node_label(dataset, reader, "products/raw")
+        # graph = to_simplegraph(edges, V)
+        # indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        # indicesfile = replace(local_path, "proteins.zip"=>"indices.jld2")
+        # graphfile = replace(local_path, "proteins.zip"=>"graph.jld2")
+        # featfile = replace(local_path, "proteins.zip"=>"edge_feat.jld2")
+        # labelfile = replace(local_path, "proteins.zip"=>"node_label.jld2")
+        
+        # JLD2.save(indicesfile, indices)
+        # JLD2.save(graphfile, "sg", graph)
+        # JLD2.save(featfile, "edge_feat", edge_feat)
+        # JLD2.save(labelfile, "node_label", node_label)
+    end
+end
+
+
+## OGBNMag dataset
+
+function dataset_preprocess(dataset::Type{OGBNMag})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        # train_indices, valid_indices, test_indices = read_indices(dataset, reader, "products")
+        # V, E, edges = read_graph(reader, "products/raw")
+        # edge_feat = read_edge_feat(dataset, reader, "products/raw")
+        # node_label = read_node_label(dataset, reader, "products/raw")
+        # graph = to_simplegraph(edges, V)
+        # indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        # indicesfile = replace(local_path, "proteins.zip"=>"indices.jld2")
+        # graphfile = replace(local_path, "proteins.zip"=>"graph.jld2")
+        # featfile = replace(local_path, "proteins.zip"=>"edge_feat.jld2")
+        # labelfile = replace(local_path, "proteins.zip"=>"node_label.jld2")
+        
+        # JLD2.save(indicesfile, indices)
+        # JLD2.save(graphfile, "sg", graph)
+        # JLD2.save(featfile, "edge_feat", edge_feat)
+        # JLD2.save(labelfile, "node_label", node_label)
+    end
+end
+
+
+## OGBNPapers100M dataset
+
+function dataset_preprocess(dataset::Type{OGBNPapers100M})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        # train_indices, valid_indices, test_indices = read_indices(dataset, reader, "products")
+        # V, E, edges = read_graph(reader, "products/raw")
+        # edge_feat = read_edge_feat(dataset, reader, "products/raw")
+        # node_label = read_node_label(dataset, reader, "products/raw")
+        # graph = to_simplegraph(edges, V)
+        # indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        # indicesfile = replace(local_path, "proteins.zip"=>"indices.jld2")
+        # graphfile = replace(local_path, "proteins.zip"=>"graph.jld2")
+        # featfile = replace(local_path, "proteins.zip"=>"edge_feat.jld2")
+        # labelfile = replace(local_path, "proteins.zip"=>"node_label.jld2")
+        
+        # JLD2.save(indicesfile, indices)
+        # JLD2.save(graphfile, "sg", graph)
+        # JLD2.save(featfile, "edge_feat", edge_feat)
+        # JLD2.save(labelfile, "node_label", node_label)
+    end
 end

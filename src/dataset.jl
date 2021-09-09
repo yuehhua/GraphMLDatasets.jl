@@ -116,7 +116,7 @@ function dataset_message(::Type{OGBNProteins})
     The task to predict the presence of protein functions in a multi-label binary classification.
     Training/validation/test splits are given by node indices.
 
-    # Properties
+    # Description
 
     - Graph: undirected, weighted, and typed (according to species) graph.
     - Node: proteins.
@@ -131,6 +131,97 @@ function dataset_message(::Type{OGBNProteins})
         discovery in genome-wide experimental datasets. Nucleic Acids Research, 47(D1):D607–D613, 2019.
     2. Gene Ontology Consortium. The gene ontology resource: 20 years and still going strong.
         Nucleic Acids Research, 47(D1):D330–D338, 2018.
+    """
+end
+
+function dataset_message(::Type{OGBNProducts})
+    """
+    The dataset contains an Amazon product co-purchasing network.
+    The task to predict the category of a product in a multi-class classification.
+    Training/validation/test splits are given by node indices.
+
+    # Description
+
+    - Graph: undirected and unweighted graph.
+    - Node: products sold in Amazon.
+    - Edge: the products are purchased together.
+    
+    # References
+
+    1. http://manikvarma.org/downloads/XC/XMLRepository.html
+    """
+end
+
+function dataset_message(::Type{OGBNArxiv})
+    """
+    The dataset contains the citation network between all Computer Science (CS) arXiv papers
+    indexed by MAG.
+    The task to predict the primary categories of the arXiv papers from 40 subject areas
+    in a multi-class classification.
+    Training/validation/test splits are given by node indices.
+
+    # Description
+
+    - Graph: directed graph.
+    - Node: arXiv paper.
+    - Edge: each directed edge indicates that one paper cites another one.
+    
+    # References
+
+    1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+        Microsoft academic graph: When experts are not enough. Quantitative Science Studies,
+        1(1):396–413, 2020.
+    2. Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg S Corrado, and Jeff Dean.
+        Distributed representationsof words and phrases and their compositionality.
+        In Advances in Neural Information Processing Systems (NeurIPS), pp. 3111–3119, 2013.
+    """
+end
+
+function dataset_message(::Type{OGBNMag})
+    """
+    The dataset contains a heterogeneous network composed of a subset of the Microsoft Academic Graph (MAG).
+    The task to predict the venue (conference or journal) of each paper, given its content, references,
+    authors, and authors’ affiliations, in a multi-class classification setting.
+    Training/validation/test splits are given by node indices.
+
+    # Description
+
+    - Graph: directed heterogeneous graph.
+    - Node: four types of entities.
+        - papers (736,389 nodes)
+        - authors (1,134,649 nodes)
+        - institutions (8,740 nodes)
+        - fields of study (59,965 nodes)
+    - Edge: four types of directed relations.
+        - an author is "affiliated with" an institution
+        - an author "writes" a paper
+        - a paper "cites" a paper
+        - a paper "has a topic of" a field of study
+    
+    # References
+
+    1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+        Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
+    """
+end
+
+function dataset_message(::Type{OGBNPapers100M})
+    """
+    The dataset contains a citation graph of 111 million papers indexed by MAG.
+    The task to predict the subject areas of the subset of papers that are published in arXiv
+    in a multi-class classification setting.
+    Training/validation/test splits are given by node indices.
+
+    # Description
+
+    - Graph: directed graph.
+    - Node: arXiv paper.
+    - Edge: each directed edge indicates that one paper cites another one.
+    
+    # References
+
+    1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+        Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
     """
 end
 
@@ -162,7 +253,7 @@ dataset_checksum(::Type{Reddit}) = "9a16353c28f8ddd07148fc5ac9b57b818d7911ea0fbe
 dataset_checksum(::Type{QM7b}) = "e2a9d670d86eba769fa7b5eadeb592184067d2ec12468b1a220bfc38502dda61"
 dataset_checksum(::Type{Entities}) = "e58bcfddd240d9bbc830bcae74e9854f1f778a96d3072930395f47d3c8e6f342"
 dataset_checksum(::Type{OGBNProteins}) = "1cd3113dc2a6f0c87a549332b77d78be45cf99804c254c18d9c72029164a0859"
-# dataset_checksum(::Type{OGBNProducts}) = "xxx"
-# dataset_checksum(::Type{OGBNArxiv}) = "xxx"
-# dataset_checksum(::Type{OGBNMag}) = "xxx"
-# dataset_checksum(::Type{OGBNPapers100M}) = "xxx"
+dataset_checksum(::Type{OGBNProducts}) = "5ea0a112edaec2141c0a2a612dd4aed58df97ff3e1ab1a0ca8238f43cbbb50a8"
+dataset_checksum(::Type{OGBNArxiv}) = "xxx"
+dataset_checksum(::Type{OGBNMag}) = "xxx"
+dataset_checksum(::Type{OGBNPapers100M}) = "xxx"
