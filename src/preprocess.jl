@@ -249,10 +249,10 @@ function dataset_preprocess(dataset::Type{OGBNProteins})
     end
 end
 
-function read_node_species(reader, prefix::String)
-    filename = joinpath(prefix, "node_species.csv.gz")
-    file = filter(x -> x.name == filename, reader.files)[1]
-    df = CSV.File(transcode(GzipDecompressor, read(file)); header=[:species]) |> DataFrame
+function read_node_species(reader, dir::String)
+    filename = joinpath(dir, "node_species.csv.gz")
+    header = [:species]
+    df = read_zipfile(reader, filename, header)
     return df
 end
 
@@ -309,27 +309,34 @@ end
 
 ## OGBNMag dataset
 
-function dataset_preprocess(dataset::Type{OGBNMag})
-    return function preprocess(local_path)
-        reader = ZipFile.Reader(local_path)
-        # train_indices, valid_indices, test_indices = read_indices(dataset, reader, "products")
-        # V, E, edges = read_graph(reader, "products/raw")
-        # edge_feat = read_edge_feat(dataset, reader, "products/raw")
-        # node_label = read_node_label(dataset, reader, "products/raw")
-        # graph = to_simplegraph(edges, V)
-        # indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+# function dataset_preprocess(dataset::Type{OGBNMag})
+#     return function preprocess(local_path)
+#         reader = ZipFile.Reader(local_path)
+#         train_indices, valid_indices, test_indices = read_indices(dataset, reader, "mag")
+#         graph = read_heterogeneous_graph(reader, "mag/raw")
+#         node_year = read_mag_year(reader, "mag/raw/node-feat/paper")
+#         node_feat = read_features(dataset, reader, "mag/raw/node-feat/paper", "node")
+#         node_label = read_labels(dataset, reader, "mag/raw/node-label/paper", "node")
+#         indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
 
-        # indicesfile = replace(local_path, "proteins.zip"=>"indices.jld2")
-        # graphfile = replace(local_path, "proteins.zip"=>"graph.jld2")
-        # featfile = replace(local_path, "proteins.zip"=>"edge_feat.jld2")
-        # labelfile = replace(local_path, "proteins.zip"=>"node_label.jld2")
+#         indicesfile = replace(local_path, "mag.zip"=>"indices.jld2")
+#         graphfile = replace(local_path, "mag.zip"=>"graph.jld2")
+#         featfile = replace(local_path, "mag.zip"=>"node_feat.jld2")
+#         labelfile = replace(local_path, "mag.zip"=>"node_label.jld2")
         
-        # JLD2.save(indicesfile, indices)
-        # JLD2.save(graphfile, "sg", graph)
-        # JLD2.save(featfile, "edge_feat", edge_feat)
-        # JLD2.save(labelfile, "node_label", node_label)
-    end
-end
+#         JLD2.save(indicesfile, indices)
+#         JLD2.save(graphfile, "g", graph)
+#         JLD2.save(featfile, "node_feat", node_feat, "node_year", node_year)
+#         JLD2.save(labelfile, "node_label", node_label)
+#     end
+# end
+
+# function read_mag_year(reader, dir::String)
+#     filename = joinpath(dir, "node_year.csv.gz")
+#     header = [:year]
+#     df = read_zipfile(reader, filename, header)
+#     return df
+# end
 
 
 ## OGBNPapers100M dataset

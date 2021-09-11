@@ -26,4 +26,6 @@ module GraphMLDatasets
     function __init__()
         init_dataset(Dataset)
     end
+
+    # precompile(read_heterogeneous_graph, (ZipFile.Reader, String))
 end

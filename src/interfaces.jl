@@ -46,6 +46,7 @@ traindata(::PPI) = JLD2.load(datadep"PPI/ppi.train.jld2", "graph", "X", "y", "id
 train_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "train_indices")
 train_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "train_indices")
 train_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "train_indices")
+# train_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 
 
 
@@ -57,6 +58,7 @@ validdata(::PPI) = JLD2.load(datadep"PPI/ppi.valid.jld2", "graph", "X", "y", "id
 valid_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "valid_indices")
 valid_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "valid_indices")
 valid_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "valid_indices")
+# valid_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 
 
 
@@ -81,6 +83,7 @@ testdata(::PPI) = JLD2.load(datadep"PPI/ppi.test.jld2", "graph", "X", "y", "ids"
 test_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "test_indices")
 test_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "test_indices")
 test_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "test_indices")
+# test_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 
 
 
@@ -95,6 +98,7 @@ graphdata(::Reddit) = JLD2.load(datadep"Reddit/reddit.graph.jld2", "sg")
 graphdata(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/graph.jld2", "sg")
 graphdata(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/graph.jld2", "sg")
 graphdata(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/graph.jld2", "sg")
+# graphdata(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/graph.jld2", "g")
 
 
 
@@ -139,9 +143,11 @@ edge_features(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/edge_feat.jld2",
 node_features(d::Dataset) = throw(ArgumentError("No existing node features for $d."))
 node_features(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/node_feat.jld2", "node_feat")
 node_features(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/node_feat.jld2", "node_feat")
+# node_features(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/node_feat.jld2", "node_feat")
 
 
 node_labels(d::Dataset) = throw(ArgumentError("No existing node labels for $d."))
 node_labels(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/node_label.jld2", "node_label")
 node_labels(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/node_label.jld2", "node_label")
 node_labels(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/node_label.jld2", "node_label")
+# node_labels(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/node_label.jld2", "node_label")

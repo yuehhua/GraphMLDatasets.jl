@@ -9,7 +9,7 @@ export
     OGBNProteins,
     OGBNProducts,
     OGBNArxiv,
-    OGBNMag,
+    # OGBNMag,
     OGBNPapers100M
 
 
@@ -19,6 +19,16 @@ abstract type NodePropPredDataset <: OGBDataset end
 abstract type EdgePropPredDataset <: OGBDataset end
 abstract type GraphPropPredDataset <: OGBDataset end
 
+"""
+    Planetoid()
+
+Planetoid dataset contains Cora, CiteSeer, PubMed three citation networks.
+sample standard deviation `stddev`  come from a distribution with mean `μ0` against the
+alternative hypothesis that the distribution does not have mean `μ0`.
+
+Implements: [`graphdata`](@ref), [`traindata`](@ref), [`testdata`](@ref), [`alldata`](@ref), [`rawdata`](@ref),
+    [`metadata`](@ref)
+"""
 struct Planetoid <: Dataset end
 struct Cora <: Dataset end
 struct PPI <: Dataset end
@@ -29,7 +39,19 @@ struct Entities <: Dataset end
 struct OGBNProteins <: NodePropPredDataset end
 struct OGBNProducts <: NodePropPredDataset end
 struct OGBNArxiv <: NodePropPredDataset end
-struct OGBNMag <: NodePropPredDataset end
+
+# """
+#     OGBNMag()
+
+# `OGBNMag` dataset contains a heterogeneous network composed of a subset of the Microsoft
+# Academic Graph (MAG). 
+# Only paper nodes have features and labels. Training/validation/test splits are given by
+# paper node indices.
+
+# Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref),
+#     [`node_labels`](@ref)
+# """
+# struct OGBNMag <: NodePropPredDataset end
 struct OGBNPapers100M <: NodePropPredDataset end
 
 
@@ -52,7 +74,7 @@ dataset_name(::Type{Entities}) = "Entities"
 dataset_name(::Type{OGBNProteins}) = "OGBN-Proteins"
 dataset_name(::Type{OGBNProducts}) = "OGBN-Products"
 dataset_name(::Type{OGBNArxiv}) = "OGBN-Arxiv"
-dataset_name(::Type{OGBNMag}) = "OGBN-Mag"
+# dataset_name(::Type{OGBNMag}) = "OGBN-Mag"
 dataset_name(::Type{OGBNPapers100M}) = "OGBN-Papers100M"
 
 
@@ -177,33 +199,33 @@ function dataset_message(::Type{OGBNArxiv})
     """
 end
 
-function dataset_message(::Type{OGBNMag})
-    """
-    The dataset contains a heterogeneous network composed of a subset of the Microsoft Academic Graph (MAG).
-    The task to predict the venue (conference or journal) of each paper, given its content, references,
-    authors, and authors’ affiliations, in a multi-class classification setting.
-    Training/validation/test splits are given by node indices.
+# function dataset_message(::Type{OGBNMag})
+#     """
+#     The dataset contains a heterogeneous network composed of a subset of the Microsoft Academic Graph (MAG).
+#     The task to predict the venue (conference or journal) of each paper, given its content, references,
+#     authors, and authors’ affiliations, in a multi-class classification setting.
+#     Training/validation/test splits are given by node indices.
 
-    # Description
+#     # Description
 
-    - Graph: directed heterogeneous graph.
-    - Node: four types of entities.
-        - papers (736,389 nodes)
-        - authors (1,134,649 nodes)
-        - institutions (8,740 nodes)
-        - fields of study (59,965 nodes)
-    - Edge: four types of directed relations.
-        - an author is "affiliated with" an institution
-        - an author "writes" a paper
-        - a paper "cites" a paper
-        - a paper "has a topic of" a field of study
+#     - Graph: directed heterogeneous graph.
+#     - Node: four types of entities.
+#         - papers (736,389 nodes)
+#         - authors (1,134,649 nodes)
+#         - institutions (8,740 nodes)
+#         - fields of study (59,965 nodes)
+#     - Edge: four types of directed relations.
+#         - an author is "affiliated with" an institution
+#         - an author "writes" a paper
+#         - a paper "cites" a paper
+#         - a paper "has a topic of" a field of study
     
-    # References
+#     # References
 
-    1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
-        Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
-    """
-end
+#     1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+#         Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
+#     """
+# end
 
 function dataset_message(::Type{OGBNPapers100M})
     """
@@ -242,7 +264,7 @@ dataset_remote_path(dataset::Type{Entities}) = [joinpath(dataset_url(dataset), "
 dataset_remote_path(::Type{OGBNProteins}) = "http://snap.stanford.edu/ogb/data/nodeproppred/proteins.zip"
 dataset_remote_path(::Type{OGBNProducts}) = "http://snap.stanford.edu/ogb/data/nodeproppred/products.zip"
 dataset_remote_path(::Type{OGBNArxiv}) = "http://snap.stanford.edu/ogb/data/nodeproppred/arxiv.zip"
-dataset_remote_path(::Type{OGBNMag}) = "http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip"
+# dataset_remote_path(::Type{OGBNMag}) = "http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip"
 dataset_remote_path(::Type{OGBNPapers100M}) = "http://snap.stanford.edu/ogb/data/nodeproppred/papers100M-bin.zip"
 
 
@@ -255,5 +277,5 @@ dataset_checksum(::Type{Entities}) = "e58bcfddd240d9bbc830bcae74e9854f1f778a96d3
 dataset_checksum(::Type{OGBNProteins}) = "1cd3113dc2a6f0c87a549332b77d78be45cf99804c254c18d9c72029164a0859"
 dataset_checksum(::Type{OGBNProducts}) = "5ea0a112edaec2141c0a2a612dd4aed58df97ff3e1ab1a0ca8238f43cbbb50a8"
 dataset_checksum(::Type{OGBNArxiv}) = "49f85c801589ecdcc52cfaca99693aaea7b8af16a9ac3f41dd85a5f3193fe276"
-dataset_checksum(::Type{OGBNMag}) = "xxx"
+# dataset_checksum(::Type{OGBNMag}) = "2afe62ead87f2c301a7398796991d347db85b2d01c5442c95169372bf5a9fca4"
 dataset_checksum(::Type{OGBNPapers100M}) = "xxx"
