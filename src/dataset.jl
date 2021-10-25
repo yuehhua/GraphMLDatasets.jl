@@ -23,35 +23,205 @@ abstract type GraphPropPredDataset <: OGBDataset end
     Planetoid()
 
 Planetoid dataset contains Cora, CiteSeer, PubMed three citation networks.
-sample standard deviation `stddev`  come from a distribution with mean `μ0` against the
-alternative hypothesis that the distribution does not have mean `μ0`.
+Nodes represent documents and edges represent citation links.
 
 Implements: [`graphdata`](@ref), [`traindata`](@ref), [`testdata`](@ref), [`alldata`](@ref), [`rawdata`](@ref),
     [`metadata`](@ref)
 """
 struct Planetoid <: Dataset end
+
+"""
+    Cora()
+
+Cora dataset contains full Cora citation networks.
+Nodes represent documents and edges represent citation links.
+
+Implements: [`graphdata`](@ref), [`alldata`](@ref), [`rawdata`](@ref), [`metadata`](@ref)
+"""
 struct Cora <: Dataset end
+
+"""
+    PPI()
+
+PPI dataset contains the protein-protein interaction networks.
+Nodes represent proteins and edges represent if proteins have interaction with each other.
+Positional gene sets, motif gene sets and immunological signatures as features (50 in total)
+and gene ontology sets as labels (121 in total).
+
+Implements: [`traindata`](@ref), [`validdata`](@ref), [`testdata`](@ref)
+"""
 struct PPI <: Dataset end
+
+"""
+    Reddit()
+
+Reddit dataset contains Reddit post networks. Reddit is a large online discussion forum where
+users post and comment in 50 communities. Reddit posts belonging to different communities.
+Nodes represent posts and edges represent if the same user comments on both posts.
+The task is to predict post categories of community.
+
+Implements: [`graphdata`](@ref), [`alldata`](@ref), [`rawdata`](@ref), [`metadata`](@ref)
+"""
 struct Reddit <: Dataset end
+
+"""
+    QM7b()
+
+QM7b dataset contains molecular structure graphs and is subset of the GDB-13 database.
+It contains stable and synthetically organic molecular structures.
+Nodes represent atoms in a molecule and edges represent there is a chemical bond between atoms.
+The 3D Cartesian coordinates of the stable conformation is given as features.
+The task is to predict the electronic properties. It contains 7,211 molecules with 14 regression
+targets.
+
+Implements: [`rawdata`](@ref)
+"""
 struct QM7b <: Dataset end
+
+"""
+    Entities()
+
+Entities dataset contains relational entities networks "AIFB", "MUTAG", "BGS" and "AM".
+Nodes represent entities and directed edges represent subject-object relations.
+The task is to predict properties of a group of entities in a knowledge graph.
+
+Implements: [`graphdata`](@ref), [`traindata`](@ref), [`testdata`](@ref)
+"""
 struct Entities <: Dataset end
 
+"""
+    OGBNProteins()
+
+`OGBNProteins` dataset contains protein-protein interaction network.
+The task to predict the presence of protein functions in a multi-label binary classification.
+Training/validation/test splits are given by node indices.
+
+# Description
+
+- Graph: undirected, weighted, and typed (according to species) graph.
+- Node: proteins.
+- Edge: different types of biologically meaningful associations
+    between proteins, e.g., physical interactions, co-expression or homology.
+
+# References
+
+1. Damian Szklarczyk, Annika L Gable, David Lyon, Alexander Junge, Stefan Wyder,
+    Jaime Huerta- Cepas, Milan Simonovic, Nadezhda T Doncheva, John H Morris, Peer Bork, et al.
+    STRING v11: protein–protein association networks with increased coverage, supporting functional
+    discovery in genome-wide experimental datasets. Nucleic Acids Research, 47(D1):D607–D613, 2019.
+2. Gene Ontology Consortium. The gene ontology resource: 20 years and still going strong.
+    Nucleic Acids Research, 47(D1):D330–D338, 2018.
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`edge_features`](@ref),
+    [`node_labels`](@ref)
+"""
 struct OGBNProteins <: NodePropPredDataset end
+
+"""
+    OGBNProducts()
+
+`OGBNProducts` dataset contains an Amazon product co-purchasing network.
+The task to predict the category of a product in a multi-class classification.
+Training/validation/test splits are given by node indices.
+
+# Description
+
+- Graph: undirected and unweighted graph.
+- Node: products sold in Amazon.
+- Edge: the products are purchased together.
+
+# References
+
+1. http://manikvarma.org/downloads/XC/XMLRepository.html
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref),
+    [`node_labels`](@ref)
+"""
 struct OGBNProducts <: NodePropPredDataset end
+
+"""
+    OGBNArxiv()
+
+`OGBNArxiv` dataset contains the citation network between all Computer Science (CS) arXiv papers
+indexed by MAG.
+The task to predict the primary categories of the arXiv papers from 40 subject areas
+in a multi-class classification.
+Training/validation/test splits are given by node indices.
+
+# Description
+
+- Graph: directed graph.
+- Node: arXiv paper.
+- Edge: each directed edge indicates that one paper cites another one.
+
+# References
+
+1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+    Microsoft academic graph: When experts are not enough. Quantitative Science Studies,
+    1(1):396–413, 2020.
+2. Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg S Corrado, and Jeff Dean.
+    Distributed representationsof words and phrases and their compositionality.
+    In Advances in Neural Information Processing Systems (NeurIPS), pp. 3111–3119, 2013.
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref),
+    [`node_labels`](@ref)
+"""
 struct OGBNArxiv <: NodePropPredDataset end
 
 # """
 #     OGBNMag()
 
-# `OGBNMag` dataset contains a heterogeneous network composed of a subset of the Microsoft
-# Academic Graph (MAG). 
-# Only paper nodes have features and labels. Training/validation/test splits are given by
-# paper node indices.
+# `OGBNMag` dataset contains a heterogeneous network composed of a subset of the Microsoft Academic Graph (MAG).
+# The task to predict the venue (conference or journal) of each paper, given its content, references,
+# authors, and authors’ affiliations, in a multi-class classification setting.
+# Training/validation/test splits are given by node indices. Only paper nodes have features and labels.
+
+# # Description
+
+# - Graph: directed heterogeneous graph.
+# - Node: four types of entities.
+#     - papers (736,389 nodes)
+#     - authors (1,134,649 nodes)
+#     - institutions (8,740 nodes)
+#     - fields of study (59,965 nodes)
+# - Edge: four types of directed relations.
+#     - an author is "affiliated with" an institution
+#     - an author "writes" a paper
+#     - a paper "cites" a paper
+#     - a paper "has a topic of" a field of study
+
+# # References
+
+# 1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+#     Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
 
 # Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref),
 #     [`node_labels`](@ref)
 # """
 # struct OGBNMag <: NodePropPredDataset end
+
+"""
+    OGBNPapers100M()
+
+`OGBNPapers100M` dataset contains a citation graph of 111 million papers indexed by MAG.
+The task to predict the subject areas of the subset of papers that are published in arXiv
+in a multi-class classification setting.
+Training/validation/test splits are given by node indices.
+
+# Description
+
+- Graph: directed graph.
+- Node: arXiv paper.
+- Edge: each directed edge indicates that one paper cites another one.
+
+# References
+
+1. Kuansan Wang, Zhihong Shen, Chiyuan Huang, Chieh-Han Wu, Yuxiao Dong, and Anshul Kanakia.
+    Microsoft academic graph: When experts are not enough. Quantitative Science Studies, 1(1):396–413, 2020.
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref),
+    [`node_labels`](@ref)
+"""
 struct OGBNPapers100M <: NodePropPredDataset end
 
 
