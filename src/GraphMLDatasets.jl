@@ -9,7 +9,7 @@ module GraphMLDatasets
     using HTTP
     using JLD2
     using JSON
-    using LightGraphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
+    using Graphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
     using MAT
     using NPZ
     using Pickle

@@ -1,5 +1,5 @@
 using GraphMLDatasets
-using LightGraphs
+using Graphs
 using SparseArrays
 using Test
 
