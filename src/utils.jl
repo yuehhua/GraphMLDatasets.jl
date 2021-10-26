@@ -55,8 +55,13 @@ function to_simpledigraph(edges::DataFrame, num_V::Integer)
     return g
 end
 
-function read_npzarray(reader, index::String)
+function read_npyarray(reader, index::String)
     i = findfirst(x -> x.name == (index * ".npy"), reader.files)
+    return NPZ.npzreadarray(reader.files[i])
+end
+
+function read_npzarray(reader, index::String)
+    i = findfirst(x -> x.name == (index * ".npz"), reader.files)
     return NPZ.npzreadarray(reader.files[i])
 end
 

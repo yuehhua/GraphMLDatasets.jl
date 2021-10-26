@@ -58,20 +58,20 @@ read_index(filename) = map(x -> parse(Int64, x), readlines(filename))
 function dataset_preprocess(dataset::Type{Cora})
     return function preprocess(local_path)
         reader = ZipFile.Reader(local_path)
-        mA, nA = read_npzarray(reader, "adj_shape")
-        adj_data = read_npzarray(reader, "adj_data")
-        adj_indptr = read_npzarray(reader, "adj_indptr") .+ 1
-        adj_indices = read_npzarray(reader, "adj_indices") .+ 1
-        mX, nX = read_npzarray(reader, "attr_shape")
-        attr_data = read_npzarray(reader, "attr_data")
-        attr_indptr = read_npzarray(reader, "attr_indptr") .+ 1
-        attr_indices = read_npzarray(reader, "attr_indices") .+ 1
+        mA, nA = read_npyarray(reader, "adj_shape")
+        adj_data = read_npyarray(reader, "adj_data")
+        adj_indptr = read_npyarray(reader, "adj_indptr") .+ 1
+        adj_indices = read_npyarray(reader, "adj_indices") .+ 1
+        mX, nX = read_npyarray(reader, "attr_shape")
+        attr_data = read_npyarray(reader, "attr_data")
+        attr_indptr = read_npyarray(reader, "attr_indptr") .+ 1
+        attr_indices = read_npyarray(reader, "attr_indices") .+ 1
 
         nzA, colptrA, rowvalA = Pickle.csr_to_csc(mA, nA, adj_data, adj_indptr, adj_indices)
         nzX, colptrX, rowvalX = Pickle.csr_to_csc(mX, nX, attr_data, attr_indptr, attr_indices)
         graph = SparseMatrixCSC(mA, nA, colptrA, rowvalA, nzA)
         X = SparseMatrixCSC(mX, nX, colptrX, rowvalX, nzX)
-        y = read_npzarray(reader, "labels")
+        y = read_npyarray(reader, "labels")
     
         all_X = sparse(X')
         all_y = Matrix{UInt16}(y')
@@ -101,18 +101,14 @@ end
 
 function dataset_preprocess(dataset::Type{PPI})
     return function preprocess(local_path)
-        unzip_zip(local_path)
+        reader = ZipFile.Reader(local_path)
 
         for phase in ["train", "test", "valid"]
-            graph_file = @datadep_str "PPI/$(phase)_graph.json"
-            id_file = @datadep_str "PPI/$(phase)_graph_id.npy"
-            X_file = @datadep_str "PPI/$(phase)_feats.npy"
-            y_file = @datadep_str "PPI/$(phase)_labels.npy"
-
-            ids = NPZ.npzread(id_file)
-            X = Matrix{Float32}(NPZ.npzread(X_file))
-            y = SparseMatrixCSC{Int32,Int64}(NPZ.npzread(y_file))
-            graph = read_ppi_graph(graph_file)
+            ids = read_npyarray(reader, "$(phase)_graph_id")
+            X = Matrix{Float32}(read_npyarray(reader, "$(phase)_feats"))
+            y = SparseMatrixCSC{Int32,Int64}(read_npyarray(reader, "$(phase)_labels"))
+            i = findfirst(x -> x.name == "$(phase)_graph.json", reader.files)
+            graph = read_ppi_graph(reader.files[i])
 
             jld2file = replace(local_path, "ppi.zip"=>"ppi.$(phase).jld2")
             JLD2.save(jld2file, Dict("graph"=>graph, "X"=>X, "y"=>y, "ids"=>ids))
@@ -120,8 +116,8 @@ function dataset_preprocess(dataset::Type{PPI})
     end
 end
 
-function read_ppi_graph(filename::String)
-    d = JSON.Parser.parsefile(filename)
+function read_ppi_graph(io::IO)
+    d = JSON.parse(io)
     g = SimpleDiGraph{Int32}(length(d["nodes"]))
 
     for pair in d["links"]
@@ -163,10 +159,10 @@ end
 function to_reddit_rawfile(graph_file, data_file, rawfile)
     reader = ZipFile.Reader(data_file)
     graph = read_reddit_graph(graph_file)
-    X = Matrix{Float32}(read_npzarray(reader, "feature"))
-    y = Vector{Int32}(read_npzarray(reader, "label"))
-    ids = Vector{Int32}(read_npzarray(reader, "node_ids"))
-    types = Vector{UInt8}(read_npzarray(reader, "node_types"))
+    X = Matrix{Float32}(read_npyarray(reader, "feature"))
+    y = Vector{Int32}(read_npyarray(reader, "label"))
+    ids = Vector{Int32}(read_npyarray(reader, "node_ids"))
+    types = Vector{UInt8}(read_npyarray(reader, "node_types"))
     JLD2.save(rawfile, Dict("graph"=>graph, "X"=>X, "y"=>y, "ids"=>ids, "types"=>types))
 
     graph, X, y
@@ -174,9 +170,9 @@ end
 
 function read_reddit_graph(graph_file)
     reader = ZipFile.Reader(graph_file)
-    row = read_npzarray(reader, "row") .+ 1
-    col = read_npzarray(reader, "col") .+ 1
-    data = read_npzarray(reader, "data")
+    row = read_npyarray(reader, "row") .+ 1
+    col = read_npyarray(reader, "col") .+ 1
+    data = read_npyarray(reader, "data")
     return sparse(row, col, data)
 end
 
