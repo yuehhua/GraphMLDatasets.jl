@@ -3,6 +3,8 @@ using Graphs
 using SparseArrays
 using Test
 
+ENV["DATADEPS_ALWAYS_ACCEPT"] = true
+
 tests = [
     "planetoid",
     "cora",
