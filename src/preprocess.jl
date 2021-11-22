@@ -131,24 +131,22 @@ end
 
 function dataset_preprocess(dataset::Type{Reddit})
     return function preprocess(local_path)
-        unzip_zip(local_path)
+        reader = ZipFile.Reader(local_path)
+        graph_file = IOBuffer(read(reader.files[1]))  # reddit_graph.npz
+        data_file = IOBuffer(read(reader.files[2]))  # reddit_data.npz
 
-        graph_file = datadep"Reddit/reddit_graph.npz"
-        data_file = datadep"Reddit/reddit_data.npz"
-
-        graphfile = replace(local_path, "reddit.zip"=>"reddit.graph.jld2")
-        allfile = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
         rawfile = replace(local_path, "reddit.zip"=>"reddit.raw.jld2")
-        metadatafile = replace(local_path, "reddit.zip"=>"reddit.metadata.jld2")
-
         graph, X, y = to_reddit_rawfile(graph_file, data_file, rawfile)
 
         sg = to_simplegraph(graph)
         all_X = Matrix(X')
         all_y = Matrix{UInt16}(y')
         meta = (graph=(num_V=nv(sg), num_E=ne(sg)),
-                all=(features_dim=size(all_X), labels_dim=size(all_y))
-                )
+                all=(features_dim=size(all_X), labels_dim=size(all_y)))
+
+        graphfile = replace(local_path, "reddit.zip"=>"reddit.graph.jld2")
+        allfile = replace(local_path, "reddit.zip"=>"reddit.all.jld2")
+        metadatafile = replace(local_path, "reddit.zip"=>"reddit.metadata.jld2")
 
         JLD2.save(graphfile, "sg", sg)
         JLD2.save(allfile, "all_X", all_X, "all_y", all_y)
