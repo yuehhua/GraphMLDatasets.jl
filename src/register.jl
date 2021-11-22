@@ -1,4 +1,13 @@
-datasets() = subtypes(Dataset)
+datasets() = datasets(Dataset)
+
+function datasets(dt::Type{<:Dataset})
+    if isconcretetype(dt)
+        return [dt]
+    elseif isabstracttype(dt)
+        ds = [datasets(s) for s in subtypes(dt)]
+        return collect(Iterators.flatten(ds))
+    end
+end
 
 function init_dataset(dataset::Type{<:Dataset})
     register(DataDep(

@@ -2,38 +2,30 @@ module GraphMLDatasets
     using InteractiveUtils: subtypes
     using SparseArrays: SparseMatrixCSC, sparse, findnz
 
-    using CSV
+    using CSV, DataFrames
+    using CodecZlib
     using DataDeps: DataDep, register, @datadep_str
+    using FileIO
     using HTTP
     using JLD2
     using JSON
-    using LightGraphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
+    using Graphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
     using MAT
+    using NPZ
+    using Pickle
     using PyCall
+    using ZipFile
 
-    export
-        Dataset,
-        Planetoid,
-        Cora,
-        PPI,
-        Reddit,
-        QM7b,
-        Entities,
-        traindata,
-        validdata,
-        testdata,
-        graphdata,
-        rawdata,
-        alldata,
-        metadata
-
-    include("./dataset.jl")
-    include("./preprocess.jl")
-    include("./interfaces.jl")
-    include("./utils.jl")
-    include("./register.jl")
+    include("dataset.jl")
+    include("ogb.jl")
+    include("preprocess.jl")
+    include("interfaces.jl")
+    include("utils.jl")
+    include("register.jl")
 
     function __init__()
         init_dataset(Dataset)
     end
+
+    # precompile(read_heterogeneous_graph, (ZipFile.Reader, String))
 end

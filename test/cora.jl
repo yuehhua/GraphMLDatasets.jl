@@ -10,10 +10,10 @@
     @test typeof(all_y) == Matrix{UInt16}
     @test size(all_y) == (1, 19793)
 
-    raw = rawdata(Cora())
-    @test typeof(raw[:graph]) == SparseMatrixCSC{Float32,Int64}
-    @test typeof(raw[:all_X]) == SparseMatrixCSC{Float32,Int64}
-    @test typeof(raw[:all_y]) == Vector{Int64}
+    g, all_X, all_y = rawdata(Cora())
+    @test g isa SparseMatrixCSC{Float32,Int64}
+    @test all_X isa SparseMatrixCSC{Float32,Int64}
+    @test all_y isa Vector{Int64}
 
     meta = metadata(Cora())
     @test meta.graph.num_V == nv(graph)

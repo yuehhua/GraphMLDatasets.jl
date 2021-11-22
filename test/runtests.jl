@@ -1,7 +1,9 @@
 using GraphMLDatasets
-using LightGraphs
+using Graphs
 using SparseArrays
 using Test
+
+ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 tests = [
     "planetoid",
@@ -10,6 +12,7 @@ tests = [
     "reddit",
     "qm7b",
     "entities",
+    "ogb",
     "utils",
 ]
 
