@@ -51,6 +51,17 @@ traindata(::PPI) = JLD2.load(datadep"PPI/ppi.train.jld2", "graph", "X", "y", "id
 
 Returns indices of training data for `dataset`.
 """
+function train_indices(pla::Planetoid, dataset::Symbol)
+    check_precondition(pla, dataset)
+    if dataset == :cora
+        return 1:140
+    elseif dataset == :citeseer
+        return 1:120
+    else  # pubmed
+        return 1:60
+    end
+end
+
 train_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "train_indices")
 train_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "train_indices")
 train_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "train_indices")
@@ -71,6 +82,17 @@ validdata(::PPI) = JLD2.load(datadep"PPI/ppi.valid.jld2", "graph", "X", "y", "id
 
 Returns indices of validation data for `dataset`.
 """
+function valid_indices(pla::Planetoid, dataset::Symbol)
+    check_precondition(pla, dataset)
+    if dataset == :cora
+        return 141:640
+    elseif dataset == :citeseer
+        return 121:520
+    else  # pubmed
+        return 61:560
+    end
+end
+
 valid_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "valid_indices")
 valid_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "valid_indices")
 valid_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "valid_indices")
@@ -104,6 +126,12 @@ testdata(::PPI) = JLD2.load(datadep"PPI/ppi.test.jld2", "graph", "X", "y", "ids"
 
 Returns indices of testing data for `dataset`.
 """
+function test_indices(pla::Planetoid, dataset::Symbol)
+    check_precondition(pla, dataset)
+    filename = @datadep_str "Planetoid/$(dataset).indices.jld2"
+    return JLD2.load(filename, "test_indices")
+end
+
 test_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "test_indices")
 test_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "test_indices")
 test_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "test_indices")
