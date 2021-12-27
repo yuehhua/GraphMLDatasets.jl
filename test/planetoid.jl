@@ -9,12 +9,22 @@
     @test size(train_X) == (1433, 140)
     @test typeof(train_y) == SparseMatrixCSC{Int32,Int64}
     @test size(train_y) == (7, 140)
+    @test train_indices(Planetoid(), :cora) == 1:140
+    @test train_indices(Planetoid(), :citeseer) == 1:120
+    @test train_indices(Planetoid(), :pubmed) == 1:60
+
+    @test valid_indices(Planetoid(), :cora) == 141:640
+    @test valid_indices(Planetoid(), :citeseer) == 121:520
+    @test valid_indices(Planetoid(), :pubmed) == 61:560
 
     test_X, test_y = testdata(Planetoid(), :cora)
     @test typeof(test_X) == SparseMatrixCSC{Float32,Int64}
     @test size(test_X) == (1433, 1000)
     @test typeof(test_y) == SparseMatrixCSC{Int32,Int64}
     @test size(test_y) == (7, 1000)
+    @test length(test_indices(Planetoid(), :cora)) == 1000
+    @test length(test_indices(Planetoid(), :citeseer)) == 1000
+    @test length(test_indices(Planetoid(), :pubmed)) == 1000
 
     all_X, all_y = alldata(Planetoid(), :cora)
     @test typeof(all_X) == SparseMatrixCSC{Float32,Int64}

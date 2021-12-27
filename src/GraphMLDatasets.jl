@@ -1,6 +1,7 @@
 module GraphMLDatasets
     using InteractiveUtils: subtypes
     using SparseArrays: SparseMatrixCSC, sparse, findnz
+    using DelimitedFiles
 
     using CSV, DataFrames
     using CodecZlib

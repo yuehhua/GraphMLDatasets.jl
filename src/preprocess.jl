@@ -8,6 +8,7 @@ function dataset_preprocess(dataset::Type{Planetoid})
             testy_file = @datadep_str "Planetoid/ind.$(subds).ty"
             allX_file = @datadep_str "Planetoid/ind.$(subds).allx"
             ally_file = @datadep_str "Planetoid/ind.$(subds).ally"
+            test_idx_file = @datadep_str "Planetoid/ind.$(subds).test.index"
     
             train_X = Pickle.npyload(trainX_file)
             train_y = Pickle.npyload(trainy_file)
@@ -16,6 +17,7 @@ function dataset_preprocess(dataset::Type{Planetoid})
             all_X = Pickle.npyload(allX_file)
             all_y = Pickle.npyload(ally_file)
             graph = Pickle.npyload(graph_file)
+            test_idx = vec(readdlm(test_idx_file, ' ', Int64))
     
             num_V = length(graph)
             sg = to_simplegraph(graph, num_V)
@@ -37,6 +39,7 @@ function dataset_preprocess(dataset::Type{Planetoid})
             trainfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).train.jld2")
             testfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).test.jld2")
             allfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).all.jld2")
+            test_idxfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).indices.jld2")
             rawfile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).raw.jld2")
             metadatafile = replace(graph_file, "ind.$(subds).graph"=>"$(subds).metadata.jld2")
     
@@ -44,6 +47,7 @@ function dataset_preprocess(dataset::Type{Planetoid})
             JLD2.save(trainfile, "train_X", train_X, "train_y", train_y)
             JLD2.save(testfile, "test_X", test_X, "test_y", test_y)
             JLD2.save(allfile, "all_X", all_X, "all_y", all_y)
+            JLD2.save(test_idxfile, "test_indices", test_idx)
             JLD2.save(rawfile, raw)
             JLD2.save(metadatafile, "meta", meta)
         end
