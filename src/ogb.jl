@@ -17,12 +17,24 @@ eval_metric(::Type{OGBNProducts}) = "Accuracy"
 eval_metric(::Type{OGBNArxiv}) = "Accuracy"
 # eval_metric(::Type{OGBNMag}) = "Accuracy"
 eval_metric(::Type{OGBNPapers100M}) = "Accuracy"
+eval_metric(::Type{OGBLPPA}) = "hits@100"
+eval_metric(::Type{OGBLCollab}) = "hits@50"
+eval_metric(::Type{OGBLDDI}) = "hits@20"
+eval_metric(::Type{OGBLCitation2}) = "mrr"
+eval_metric(::Type{OGBLWikiKG2}) = "mrr"
+eval_metric(::Type{OGBLBioKG}) = "	mrr"
 
 task_type(::Type{OGBNProteins}) = "binary classification"
 task_type(::Type{OGBNProducts}) = "multiclass classification"
 task_type(::Type{OGBNArxiv}) = "multiclass classification"
 # task_type(::Type{OGBNMag}) = "multiclass classification"
 task_type(::Type{OGBNPapers100M}) = "multiclass classification"
+task_type(::Type{OGBLPPA}) = "link prediction"
+task_type(::Type{OGBLCollab}) = "link prediction"
+task_type(::Type{OGBLDDI}) = "link prediction"
+task_type(::Type{OGBLCitation2}) = "link prediction"
+task_type(::Type{OGBLWikiKG2}) = "KG completion"
+task_type(::Type{OGBLBioKG}) = "KG completion"
 
 feature_dim(dataset::Type{<:OGBDataset}, kind::Symbol) = feature_dim(dataset, Val(kind))
 feature_dim(dataset::Type{<:OGBDataset}, ::Val{<:Any}) = throw(ArgumentError("not existing such kind of feature dim."))
@@ -36,6 +48,13 @@ split_prefix(::Type{OGBNProducts}) = "sales_ranking"
 split_prefix(::Type{OGBNArxiv}) = "time"
 # split_prefix(::Type{OGBNMag}) = "time/paper"
 split_prefix(::Type{OGBNPapers100M}) = "time"
+split_prefix(::Type{OGBLPPA}) = "throughput"
+split_prefix(::Type{OGBLCollab}) = "time"
+split_prefix(::Type{OGBLDDI}) = "target"
+split_prefix(::Type{OGBLCitation2}) = "time"
+split_prefix(::Type{OGBLWikiKG2}) = "time"
+split_prefix(::Type{OGBLBioKG}) = "random"
+
 
 # read indices
 

@@ -16,7 +16,7 @@ export
 abstract type Dataset end
 abstract type OGBDataset <: Dataset end
 abstract type NodePropPredDataset <: OGBDataset end
-abstract type EdgePropPredDataset <: OGBDataset end
+abstract type LinkPropPredDataset <: OGBDataset end
 abstract type GraphPropPredDataset <: OGBDataset end
 
 """
@@ -224,6 +224,13 @@ Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref
 """
 struct OGBNPapers100M <: NodePropPredDataset end
 
+struct OGBLPPA <: LinkPropPredDataset end
+struct OGBLCollab <: LinkPropPredDataset end
+struct OGBLDDI <: LinkPropPredDataset end
+struct OGBLCitation2 <: LinkPropPredDataset end
+struct OGBLWikiKG2 <: LinkPropPredDataset end
+struct OGBLBioKG <: LinkPropPredDataset end
+
 
 dataset_url(::Type{Planetoid}) = "https://github.com/kimiyoung/planetoid/raw/master/data"
 dataset_url(::Type{Entities}) = "https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/"
@@ -246,6 +253,12 @@ dataset_name(::Type{OGBNProducts}) = "OGBN-Products"
 dataset_name(::Type{OGBNArxiv}) = "OGBN-Arxiv"
 # dataset_name(::Type{OGBNMag}) = "OGBN-Mag"
 dataset_name(::Type{OGBNPapers100M}) = "OGBN-Papers100M"
+dataset_name(::Type{OGBLPPA}) = "OGBL-PPA"
+dataset_name(::Type{OGBLCollab}) = "OGBL-Collab"
+dataset_name(::Type{OGBLDDI}) = "OGBL-DDI"
+dataset_name(::Type{OGBLCitation2}) = "OGBL-Citation2"
+dataset_name(::Type{OGBLWikiKG2}) = "OGBL-WikiKG2"
+dataset_name(::Type{OGBLBioKG}) = "OGBL-BioKG"
 
 
 
@@ -417,6 +430,60 @@ function dataset_message(::Type{OGBNPapers100M})
     """
 end
 
+function dataset_message(::Type{OGBLPPA})
+    """
+
+    # Description
+
+    - Graph: undirected and unweighted graph.
+    - Node: proteins.
+    - Edge: biologically meaningful associations between proteins, e.g., physical interactions, co-expression,
+        homology or genomic neighborhood.
+    
+    # References
+    
+    1. Damian Szklarczyk, Annika L Gable, David Lyon, Alexander Junge, Stefan Wyder, Jaime Huerta- Cepas,
+        Milan Simonovic, Nadezhda T Doncheva, John H Morris, Peer Bork, et al. STRING v11: protein–protein
+        association networks with increased coverage, supporting functional discovery in genome-wide experimental
+        datasets. Nucleic Acids Research, 47(D1):D607–D613, 2019.
+    """
+end
+
+function dataset_message(::Type{OGBLCollab})
+    """
+
+    # Description
+
+    - Graph: undirected and weighted graph.
+    - Node: authors.
+    - Edge: the collaboration between authors.
+    
+    # References
+    
+    1. 
+    """
+end
+
+function dataset_message(::Type{OGBLDDI})
+    """
+    """
+end
+
+function dataset_message(::Type{OGBLCitation2})
+    """
+    """
+end
+
+function dataset_message(::Type{OGBLWikiKG2})
+    """
+    """
+end
+
+function dataset_message(::Type{OGBLBioKG})
+    """
+    """
+end
+
 
 function dataset_remote_path(dataset::Type{Planetoid})
     url = dataset_url(dataset)
@@ -436,6 +503,12 @@ dataset_remote_path(::Type{OGBNProducts}) = "http://snap.stanford.edu/ogb/data/n
 dataset_remote_path(::Type{OGBNArxiv}) = "http://snap.stanford.edu/ogb/data/nodeproppred/arxiv.zip"
 # dataset_remote_path(::Type{OGBNMag}) = "http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip"
 dataset_remote_path(::Type{OGBNPapers100M}) = "http://snap.stanford.edu/ogb/data/nodeproppred/papers100M-bin.zip"
+dataset_remote_path(::Type{OGBLPPA}) = "http://snap.stanford.edu/ogb/data/linkproppred/ppassoc.zip"
+dataset_remote_path(::Type{OGBLCollab}) = "http://snap.stanford.edu/ogb/data/linkproppred/collab.zip"
+dataset_remote_path(::Type{OGBLDDI}) = "http://snap.stanford.edu/ogb/data/linkproppred/ddi.zip"
+dataset_remote_path(::Type{OGBLCitation2}) = "http://snap.stanford.edu/ogb/data/linkproppred/citation-v2.zip"
+dataset_remote_path(::Type{OGBLWikiKG2}) = "http://snap.stanford.edu/ogb/data/linkproppred/wikikg-v2.zip"
+dataset_remote_path(::Type{OGBLBioKG}) = "http://snap.stanford.edu/ogb/data/linkproppred/biokg.zip"
 
 
 dataset_checksum(::Type{Planetoid}) = "f52b3d47f5993912d7509b51e8090b6807228c4ba8c7d906f946868005c61c18"
