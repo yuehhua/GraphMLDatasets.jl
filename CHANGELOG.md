@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5]
+
+- add OGBNProteins, OGBNProducts, OGBNArxiv dataset
+- add Planetoid indices
+- improve Reddit preprocessing
+- replace part of PyCall with Pickle
+
 ## [0.1.4]
 
 - Refactor project
