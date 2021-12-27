@@ -10,7 +10,7 @@ module GraphMLDatasets
     using HTTP
     using JLD2
     using JSON
-    using Graphs: SimpleGraph, SimpleDiGraph, add_edge!, nv, ne
+    using Graphs
     using MAT
     using NPZ
     using Pickle

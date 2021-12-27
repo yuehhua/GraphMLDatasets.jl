@@ -30,10 +30,22 @@ Returns training data for `dataset`.
 """
 traindata(::Dataset) = throw(ArgumentError("Training set not defined."))
 
-function traindata(pla::Planetoid, dataset::Symbol)
+function traindata(pla::Planetoid, dataset::Symbol; padding::Bool=false)
     check_precondition(pla, dataset)
     filename = @datadep_str "Planetoid/$(dataset).train.jld2"
-    return JLD2.load(filename, "train_X", "train_y")
+    X, y = JLD2.load(filename, "train_X", "train_y")
+    
+    if padding
+        T = eltype(X)
+        idx = train_indices(pla, dataset)
+        padded_X = zeros(T, size(X, 1), nv(pla, dataset))
+        padded_y = zeros(T, size(y, 1), nv(pla, dataset))
+        padded_X[:, idx] .= X
+        padded_y[:, idx] .= y
+        return padded_X, padded_y
+    else
+        return X, y
+    end
 end
 
 # traindata(cora::Cora) = JLD2.load(datadep"Cora/cora.train.jld2", "graph", "train_X", "train_y")
@@ -106,10 +118,22 @@ Returns testing data for `dataset`.
 """
 testdata(::Dataset) = throw(ArgumentError("Testing set not defined."))
 
-function testdata(pla::Planetoid, dataset::Symbol)
+function testdata(pla::Planetoid, dataset::Symbol; padding::Bool=false)
     check_precondition(pla, dataset)
     filename = @datadep_str "Planetoid/$(dataset).test.jld2"
-    return JLD2.load(filename, "test_X", "test_y")
+    X, y = JLD2.load(filename, "test_X", "test_y")
+
+    if padding
+        T = eltype(X)
+        idx = test_indices(pla, dataset)
+        padded_X = zeros(T, size(X, 1), nv(pla, dataset))
+        padded_y = zeros(T, size(y, 1), nv(pla, dataset))
+        padded_X[:, idx] .= X
+        padded_y[:, idx] .= y
+        return padded_X, padded_y
+    else
+        return X, y
+    end
 end
 
 # testdata(::Cora) = load(datadep"Cora/cora.test.jld2", :graph, "test_X", "test_y")
@@ -155,6 +179,17 @@ graphdata(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/graph.jld2", "sg")
 graphdata(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/graph.jld2", "sg")
 graphdata(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/graph.jld2", "sg")
 # graphdata(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/graph.jld2", "g")
+
+function Graphs.nv(pla::Planetoid, dataset::Symbol)
+    check_precondition(pla, dataset)
+    if dataset == :cora
+        return 2708
+    elseif dataset == :citeseer
+        return 3312
+    else  # pubmed
+        return 19717
+    end
+end
 
 
 """
