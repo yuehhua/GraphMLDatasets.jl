@@ -23,7 +23,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
-CSV = "0.8 - 0.9"
+CSV = "0.8 - 0.9, 0.10"
 CodecZlib = "0.7"
 DataDeps = "0.7"
 DataFrames = "1"
