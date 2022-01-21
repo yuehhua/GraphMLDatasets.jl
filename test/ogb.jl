@@ -102,4 +102,15 @@
     @testset "OGBNPapers100M" begin
 
     end
+
+    @testset "OGBLCollab" begin
+        graph = graphdata(OGBLCollab())
+        @test graph isa SimpleGraph{Int32}
+        @test nv(graph) == 235868
+        @test ne(graph) == 967632
+
+        nf = node_features(OGBLCollab())
+        @test nf isa Matrix{Float32}
+        @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLCollab, :node))
+    end
 end

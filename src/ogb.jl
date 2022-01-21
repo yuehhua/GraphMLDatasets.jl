@@ -42,6 +42,7 @@ feature_dim(::Type{OGBNProteins}, ::Val{:edge}) = 8
 feature_dim(::Type{OGBNProducts}, ::Val{:node}) = 100
 feature_dim(::Type{OGBNArxiv}, ::Val{:node}) = 128
 # feature_dim(::Type{OGBNMag}, ::Val{:node}) = 128
+feature_dim(::Type{OGBLCollab}, ::Val{:node}) = 128
 
 split_prefix(::Type{OGBNProteins}) = "species"
 split_prefix(::Type{OGBNProducts}) = "sales_ranking"
@@ -67,27 +68,39 @@ function read_indices(obg::Type{<:OGBDataset}, reader, dir::String)
 end
 
 function read_train_indices(reader, dir::String)
-    filename = joinpath(dir, "train.csv.gz")
-    header = [:index]
-    df = read_zipfile(reader, filename, header)
-    df.index .+= 1
-    return df.index
+    prefix = joinpath(dir, "train")
+    file = filter(x -> startswith(x.name, prefix), reader.files)[1]
+    if endswith(file.name, "csv.gz")
+        df = read_csv_gz(file, [:index])
+        df.index .+= 1
+        return df.index
+    elseif endswith(file.name, "pt")
+        return read_torch_pickle(file)
+    end
 end
 
 function read_valid_indices(reader, dir::String)
-    filename = joinpath(dir, "valid.csv.gz")
-    header = [:index]
-    df = read_zipfile(reader, filename, header)
-    df.index .+= 1
-    return df.index
+    prefix = joinpath(dir, "valid")
+    file = filter(x -> startswith(x.name, prefix), reader.files)[1]
+    if endswith(file.name, "csv.gz")
+        df = read_csv_gz(file, [:index])
+        df.index .+= 1
+        return df.index
+    elseif endswith(file.name, "pt")
+        return read_torch_pickle(file)
+    end
 end
 
 function read_test_indices(reader, dir::String)
-    filename = joinpath(dir, "test.csv.gz")
-    header = [:index]
-    df = read_zipfile(reader, filename, header)
-    df.index .+= 1
-    return df.index
+    prefix = joinpath(dir, "test")
+    file = filter(x -> startswith(x.name, prefix), reader.files)[1]
+    if endswith(file.name, "csv.gz")
+        df = read_csv_gz(file, [:index])
+        df.index .+= 1
+        return df.index
+    elseif endswith(file.name, "pt")
+        return read_torch_pickle(file)
+    end
 end
 
 
@@ -100,27 +113,45 @@ function read_graph(reader, dir::String)
     return V, E, edges
 end
 
+function read_weighted_graph(reader, dir::String)
+    V = read_num_node(reader, dir)
+    E = read_num_edge(reader, dir)
+    edges = read_edges(reader, dir)
+    weights = read_edge_weights(reader, dir)
+    edges = hcat(edges, weights)
+    return V, E, edges
+end
+
 function read_num_node(reader, dir::String)
     filename = joinpath(dir, "num-node-list.csv.gz")
-    header = [:number]
-    df = read_zipfile(reader, filename, header)
+    df = read_zipfile(reader, filename, [:number])
     return df.number[1]
 end
 
 function read_num_edge(reader, dir::String)
     filename = joinpath(dir, "num-edge-list.csv.gz")
-    header = [:number]
-    df = read_zipfile(reader, filename, header)
+    df = read_zipfile(reader, filename, [:number])
     return df.number[1]
 end
 
 function read_edges(reader, dir::String)
     filename = joinpath(dir, "edge.csv.gz")
-    header = [:node1, :node2]
-    df = read_zipfile(reader, filename, header)
+    df = read_zipfile(reader, filename, [:node1, :node2])
     df.node1 .+= 1
     df.node2 .+= 1
     return df
+end
+
+function read_edge_weights(reader, dir::String)
+    filename = joinpath(dir, "edge_weight.csv.gz")
+    df = read_zipfile(reader, filename, [:weight])
+    return df
+end
+
+function read_node_year(reader, dir::String)
+    filename = joinpath(dir, "node_year.csv.gz")
+    df = read_zipfile(reader, filename, [:year])
+    return df.year[1]
 end
 
 # function read_heterogeneous_graph(reader, dir::String)

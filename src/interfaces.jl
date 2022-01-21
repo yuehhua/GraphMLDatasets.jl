@@ -78,6 +78,7 @@ train_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "
 train_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "train_indices")
 train_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "train_indices")
 # train_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+train_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "train_indices")
 
 
 """
@@ -109,6 +110,7 @@ valid_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "
 valid_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "valid_indices")
 valid_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "valid_indices")
 # valid_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+valid_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "valid_indices")
 
 
 """
@@ -160,6 +162,7 @@ test_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "t
 test_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "test_indices")
 test_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "test_indices")
 # test_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+test_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "test_indices")
 
 
 """
@@ -179,6 +182,12 @@ graphdata(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/graph.jld2", "sg")
 graphdata(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/graph.jld2", "sg")
 graphdata(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/graph.jld2", "sg")
 # graphdata(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/graph.jld2", "g")
+graphdata(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/graph.jld2", "sg")
+graphdata(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/graph.jld2", "sg")
+graphdata(::OGBLDDI) = JLD2.load(datadep"OGBL-DDI/graph.jld2", "sg")
+graphdata(::OGBLCitation2) = JLD2.load(datadep"OGBL-Citation2/graph.jld2", "sg")
+graphdata(::OGBLWikiKG2) = JLD2.load(datadep"OGBL-WikiKG2/graph.jld2", "sg")
+graphdata(::OGBLBioKG) = JLD2.load(datadep"OGBL-BioKG/graph.jld2", "sg")
 
 function Graphs.nv(pla::Planetoid, dataset::Symbol)
     check_precondition(pla, dataset)
@@ -269,6 +278,8 @@ node_features(d::Dataset) = throw(ArgumentError("No existing node features for $
 node_features(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/node_feat.jld2", "node_feat")
 node_features(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/node_feat.jld2", "node_feat")
 # node_features(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/node_feat.jld2", "node_feat")
+node_features(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/node_feat.jld2", "node_feat")
+node_features(::OGBLCitation2) = JLD2.load(datadep"OGBL-Citation2/node_feat.jld2", "node_feat")
 
 
 """

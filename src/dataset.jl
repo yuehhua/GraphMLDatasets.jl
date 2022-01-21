@@ -10,7 +10,13 @@ export
     OGBNProducts,
     OGBNArxiv,
     # OGBNMag,
-    OGBNPapers100M
+    OGBNPapers100M,
+    OGBLPPA,
+    OGBLCollab,
+    OGBLDDI,
+    OGBLCitation2,
+    OGBLWikiKG2,
+    OGBLBioKG
 
 
 abstract type Dataset end
@@ -225,6 +231,20 @@ Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref
 struct OGBNPapers100M <: NodePropPredDataset end
 
 struct OGBLPPA <: LinkPropPredDataset end
+
+"""
+    OGBLCollab()
+
+`OGBLCollab`
+
+# Description
+
+- Graph: 
+- Node: 
+- Edge: 
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref)
+"""
 struct OGBLCollab <: LinkPropPredDataset end
 struct OGBLDDI <: LinkPropPredDataset end
 struct OGBLCitation2 <: LinkPropPredDataset end
@@ -522,3 +542,9 @@ dataset_checksum(::Type{OGBNProducts}) = "5ea0a112edaec2141c0a2a612dd4aed58df97f
 dataset_checksum(::Type{OGBNArxiv}) = "49f85c801589ecdcc52cfaca99693aaea7b8af16a9ac3f41dd85a5f3193fe276"
 # dataset_checksum(::Type{OGBNMag}) = "2afe62ead87f2c301a7398796991d347db85b2d01c5442c95169372bf5a9fca4"
 dataset_checksum(::Type{OGBNPapers100M}) = "xxx"
+dataset_checksum(::Type{OGBLPPA}) = "6d2f751fee541253162ea5e777a8e0b4d95e327bc5cc0cad8536e94be541b6c8"
+dataset_checksum(::Type{OGBLCollab}) = "c5563198e041c338f0a78e11322bb2eb2de76b68f0e9ae3e3b6d6af2d8ca64cc"
+dataset_checksum(::Type{OGBLDDI}) = "0d0371d3dbd2d30a6801af245b226c6b25bf0dcebc6f26f162a6057d8d78d5f4"
+dataset_checksum(::Type{OGBLCitation2}) = "f8502b935ea8f0a7bea5eb130991ca337cd26cad7f231cc9f5546fe076f4be53"
+dataset_checksum(::Type{OGBLWikiKG2}) = "e992c627cefb1856d30435be85f28073c9214633525eea4693a66db8978c3dbd"
+dataset_checksum(::Type{OGBLBioKG}) = "f20b9c4459b8ed95a0340e79bcc814dd401af46b60134ff0ca3edb93a14c488e"
