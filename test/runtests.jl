@@ -1,5 +1,6 @@
 using GraphMLDatasets
 using Graphs
+using SimpleWeightedGraphs
 using SparseArrays
 using Test
 

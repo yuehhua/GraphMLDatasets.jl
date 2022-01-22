@@ -42,6 +42,7 @@ feature_dim(::Type{OGBNProteins}, ::Val{:edge}) = 8
 feature_dim(::Type{OGBNProducts}, ::Val{:node}) = 100
 feature_dim(::Type{OGBNArxiv}, ::Val{:node}) = 128
 # feature_dim(::Type{OGBNMag}, ::Val{:node}) = 128
+feature_dim(::Type{OGBLPPA}, ::Val{:node}) = 58
 feature_dim(::Type{OGBLCollab}, ::Val{:node}) = 128
 
 split_prefix(::Type{OGBNProteins}) = "species"

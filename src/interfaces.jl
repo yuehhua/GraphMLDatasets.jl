@@ -78,6 +78,7 @@ train_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "
 train_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "train_indices")
 train_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "train_indices")
 # train_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+train_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "train_indices")
 train_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "train_indices")
 
 
@@ -110,6 +111,7 @@ valid_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "
 valid_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "valid_indices")
 valid_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "valid_indices")
 # valid_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+valid_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "valid_indices")
 valid_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "valid_indices")
 
 
@@ -162,6 +164,7 @@ test_indices(::OGBNProteins) = JLD2.load(datadep"OGBN-Proteins/indices.jld2", "t
 test_indices(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/indices.jld2", "test_indices")
 test_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "test_indices")
 # test_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
+test_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "test_indices")
 test_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "test_indices")
 
 

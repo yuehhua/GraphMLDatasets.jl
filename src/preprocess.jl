@@ -367,6 +367,18 @@ end
 function dataset_preprocess(dataset::Type{OGBLPPA})
     return function preprocess(local_path)
         reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "ppassoc")
+        V, E, edges = read_graph(reader, "ppassoc/raw")
+        graph = to_simplegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "ppassoc.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "ppassoc.zip"=>"graph.jld2")
+        featfile = replace(local_path, "ppassoc.zip"=>"node_feat.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(featfile, "node_feat", node_feat)
     end
 end
 
@@ -379,7 +391,7 @@ function dataset_preprocess(dataset::Type{OGBLCollab})
         train_indices, valid_indices, test_indices = read_indices(dataset, reader, "collab")
         V, E, edges = read_weighted_graph(reader, "collab/raw")
         node_feat = read_features(dataset, reader, "collab/raw", "node")
-        graph = to_simplegraph(edges, V)
+        graph = to_weightegraph(edges, V)
         indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
 
         indicesfile = replace(local_path, "collab.zip"=>"indices.jld2")

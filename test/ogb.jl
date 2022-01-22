@@ -103,9 +103,20 @@
 
     end
 
+    @testset "OGBLPPA" begin
+        # graph = graphdata(OGBLPPA())
+        # @test graph isa SimpleGraph{Int32}
+        # @test nv(graph) == 235868
+        # @test ne(graph) == 967632
+
+        # nf = node_features(OGBLPPA())
+        # @test nf isa Matrix{Float32}
+        # @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLPPA, :node))
+    end
+
     @testset "OGBLCollab" begin
         graph = graphdata(OGBLCollab())
-        @test graph isa SimpleGraph{Int32}
+        @test graph isa SimpleWeightedGraph{Int32,Float32}
         @test nv(graph) == 235868
         @test ne(graph) == 967632
 

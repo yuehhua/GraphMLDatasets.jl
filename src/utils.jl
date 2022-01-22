@@ -55,6 +55,14 @@ function to_simpledigraph(edges::DataFrame, num_V::Integer)
     return g
 end
 
+function to_weightegraph(edges::DataFrame, num_V::Integer)
+    spA = sparse(Int32.(edges.node1), Int32.(edges.node2), Float32.(edges.weight), num_V, num_V)
+    selfloops = diag(spA)
+    if nnz(selfloops) == 0
+        return SimpleWeightedGraph(spA + spA')
+    end
+end
+
 function read_npyarray(reader, index::String)
     i = findfirst(x -> x.name == (index * ".npy"), reader.files)
     return NPZ.npzreadarray(reader.files[i])

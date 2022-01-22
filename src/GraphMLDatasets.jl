@@ -1,6 +1,7 @@
 module GraphMLDatasets
     using InteractiveUtils: subtypes
-    using SparseArrays: SparseMatrixCSC, sparse, findnz
+    using LinearAlgebra
+    using SparseArrays
     using DelimitedFiles
 
     using CSV, DataFrames
@@ -11,6 +12,7 @@ module GraphMLDatasets
     using JLD2
     using JSON
     using Graphs
+    using SimpleWeightedGraphs
     using MAT
     using NPZ
     using Pickle
