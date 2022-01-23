@@ -104,14 +104,14 @@
     end
 
     @testset "OGBLPPA" begin
-        # graph = graphdata(OGBLPPA())
-        # @test graph isa SimpleGraph{Int32}
-        # @test nv(graph) == 235868
-        # @test ne(graph) == 967632
+        graph = graphdata(OGBLPPA())
+        @test graph isa SimpleGraph{Int32}
+        @test nv(graph) == 576289
+        @test ne(graph) == 21231931
 
-        # nf = node_features(OGBLPPA())
-        # @test nf isa Matrix{Float32}
-        # @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLPPA, :node))
+        nf = node_features(OGBLPPA())
+        @test nf isa Matrix{Float32}
+        @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLPPA, :node))
     end
 
     @testset "OGBLCollab" begin
@@ -123,5 +123,18 @@
         nf = node_features(OGBLCollab())
         @test nf isa Matrix{Float32}
         @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLCollab, :node))
+    end
+
+    @testset "OGBLDDI" begin
+        graph = graphdata(OGBLDDI())
+        @test graph isa SimpleGraph{Int32}
+        @test nv(graph) == 4267
+        @test ne(graph) == 1067911
+
+        df = metadata(OGBLDDI())
+        @test df isa DataFrame
+        @test nrow(df) == 2669764
+        @test names(df) == ["first drug id", "first drug name", "second drug id",
+                            "second drug name", "description"]
     end
 end

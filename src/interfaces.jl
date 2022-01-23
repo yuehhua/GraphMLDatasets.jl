@@ -80,6 +80,7 @@ train_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "train_
 # train_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 train_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "train_indices")
 train_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "train_indices")
+train_indices(::OGBLDDI) = JLD2.load(datadep"OGBL-DDI/indices.jld2", "train_indices")
 
 
 """
@@ -113,6 +114,7 @@ valid_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "valid_
 # valid_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 valid_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "valid_indices")
 valid_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "valid_indices")
+valid_indices(::OGBLDDI) = JLD2.load(datadep"OGBL-DDI/indices.jld2", "valid_indices")
 
 
 """
@@ -166,6 +168,7 @@ test_indices(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/indices.jld2", "test_in
 # test_indices(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/indices.jld2", "train_indices")
 test_indices(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/indices.jld2", "test_indices")
 test_indices(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/indices.jld2", "test_indices")
+test_indices(::OGBLDDI) = JLD2.load(datadep"OGBL-DDI/indices.jld2", "test_indices")
 
 
 """
@@ -261,6 +264,7 @@ end
 
 metadata(::Cora) = JLD2.load(datadep"Cora/cora.metadata.jld2", "meta")
 metadata(::Reddit) = JLD2.load(datadep"Reddit/reddit.metadata.jld2", "meta")
+metadata(::OGBLDDI) = JLD2.load(datadep"OGBL-DDI/metadata.jld2", "meta")
 
 
 """
@@ -281,6 +285,7 @@ node_features(d::Dataset) = throw(ArgumentError("No existing node features for $
 node_features(::OGBNProducts) = JLD2.load(datadep"OGBN-Products/node_feat.jld2", "node_feat")
 node_features(::OGBNArxiv) = JLD2.load(datadep"OGBN-Arxiv/node_feat.jld2", "node_feat")
 # node_features(::OGBNMag) = JLD2.load(datadep"OGBN-Mag/node_feat.jld2", "node_feat")
+node_features(::OGBLPPA) = JLD2.load(datadep"OGBL-PPA/node_feat.jld2", "node_feat")
 node_features(::OGBLCollab) = JLD2.load(datadep"OGBL-Collab/node_feat.jld2", "node_feat")
 node_features(::OGBLCitation2) = JLD2.load(datadep"OGBL-Citation2/node_feat.jld2", "node_feat")
 

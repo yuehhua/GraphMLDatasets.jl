@@ -369,6 +369,7 @@ function dataset_preprocess(dataset::Type{OGBLPPA})
         reader = ZipFile.Reader(local_path)
         train_indices, valid_indices, test_indices = read_indices(dataset, reader, "ppassoc")
         V, E, edges = read_graph(reader, "ppassoc/raw")
+        node_feat = read_features(dataset, reader, "ppassoc/raw", "node")
         graph = to_simplegraph(edges, V)
         indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
 
@@ -414,13 +415,15 @@ function dataset_preprocess(dataset::Type{OGBLDDI})
         V, E, edges = read_graph(reader, "ddi/raw")
         graph = to_simplegraph(edges, V)
         indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+        desc = read_desciption(reader, "ddi")
 
         indicesfile = replace(local_path, "ddi.zip"=>"indices.jld2")
         graphfile = replace(local_path, "ddi.zip"=>"graph.jld2")
+        metadatafile = replace(local_path, "ddi.zip"=>"metadata.jld2")
         
         JLD2.save(indicesfile, indices)
         JLD2.save(graphfile, "sg", graph)
-        # ddi/mapping/ddi_description.csv.gz
+        JLD2.save(metadatafile, "meta", desc)
     end
 end
 

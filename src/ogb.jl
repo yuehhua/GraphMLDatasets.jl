@@ -138,8 +138,8 @@ end
 function read_edges(reader, dir::String)
     filename = joinpath(dir, "edge.csv.gz")
     df = read_zipfile(reader, filename, [:node1, :node2])
-    df.node1 .+= 1
-    df.node2 .+= 1
+    df[:, :node1] .+= 1
+    df[:, :node2] .+= 1
     return df
 end
 
@@ -153,6 +153,13 @@ function read_node_year(reader, dir::String)
     filename = joinpath(dir, "node_year.csv.gz")
     df = read_zipfile(reader, filename, [:year])
     return df.year[1]
+end
+
+function read_desciption(reader, dir::String)
+    filename = joinpath(dir, "mapping/$(dir)_description.csv.gz")
+    file = filter(x -> x.name == filename, reader.files)[1]
+    df = CSV.File(transcode(GzipDecompressor, read(file))) |> DataFrame
+    return df
 end
 
 # function read_heterogeneous_graph(reader, dir::String)

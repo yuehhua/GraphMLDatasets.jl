@@ -246,6 +246,20 @@ struct OGBLPPA <: LinkPropPredDataset end
 Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref)
 """
 struct OGBLCollab <: LinkPropPredDataset end
+
+"""
+    OGBLDDI()
+
+`OGBLDDI`
+
+# Description
+
+- Graph: homogeneous, unweighted, undirected graph, representing the drug-drug interaction network.
+- Node: 
+- Edge: 
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`metadata`](@ref)
+"""
 struct OGBLDDI <: LinkPropPredDataset end
 struct OGBLCitation2 <: LinkPropPredDataset end
 struct OGBLWikiKG2 <: LinkPropPredDataset end
