@@ -197,10 +197,22 @@ end
 
 Returns the whole dataset for `dataset`.
 """
-function alldata(pla::Planetoid, dataset::Symbol)
+function alldata(pla::Planetoid, dataset::Symbol; padding::Bool=false)
     check_precondition(pla, dataset)
     filename = @datadep_str "Planetoid/$(dataset).all.jld2"
-    return JLD2.load(filename, "all_X", "all_y")
+    X, y = JLD2.load(filename, "all_X", "all_y")
+    
+    if padding
+        T = eltype(X)
+        idx = 1:size(X, 2)
+        padded_X = zeros(T, size(X, 1), nv(pla, dataset))
+        padded_y = zeros(T, size(y, 1), nv(pla, dataset))
+        padded_X[:, idx] .= X
+        padded_y[:, idx] .= y
+        return padded_X, padded_y
+    else
+        return X, y
+    end
 end
 
 alldata(::Cora) = JLD2.load(datadep"Cora/cora.all.jld2", "all_X", "all_y")
