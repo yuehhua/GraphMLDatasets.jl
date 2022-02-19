@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.7]
+
+- bug fix
+
 ## [0.1.6]
 
 - padding features for all nodes (only for `Planetoid` dataset)
