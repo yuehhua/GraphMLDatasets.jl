@@ -210,7 +210,7 @@ struct OGBNArxiv <: NodePropPredDataset end
     OGBNPapers100M()
 
 `OGBNPapers100M` dataset contains a citation graph of 111 million papers indexed by MAG.
-The task to predict the subject areas of the subset of papers that are published in arXiv
+The task is to predict the subject areas of the subset of papers that are published in arXiv
 in a multi-class classification setting.
 Training/validation/test splits are given by node indices.
 
@@ -235,13 +235,14 @@ struct OGBLPPA <: LinkPropPredDataset end
 """
     OGBLCollab()
 
-`OGBLCollab`
+`OGBLCollab` dataset contains a subset of the collaboration network between authors indexed by MAG.
+The task is to predict the future author collaboration relationships given the past collaborations.
 
 # Description
 
-- Graph: 
-- Node: 
-- Edge: 
+- Graph: undirected graph
+- Node: author.
+- Edge: the collaboration between authors.
 
 Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref)
 """
@@ -250,17 +251,34 @@ struct OGBLCollab <: LinkPropPredDataset end
 """
     OGBLDDI()
 
-`OGBLDDI`
+`OGBLDDI` dataset contains the drug-drug interaction network.
+The task is to predict drug-drug interactions given information on already known drug-drug
+interactions.
 
 # Description
 
 - Graph: homogeneous, unweighted, undirected graph, representing the drug-drug interaction network.
-- Node: 
-- Edge: 
+- Node: an FDA-approved or experimental drug.
+- Edge: interactions between drugs.
 
 Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`metadata`](@ref)
 """
 struct OGBLDDI <: LinkPropPredDataset end
+
+"""
+    OGBLCitation2()
+
+`OGBLCitation2` dataset contains the citation network between a subset of papers extracted from MAG.
+The task is to predict missing citations given existing citations.
+
+# Description
+
+- Graph: directed graph.
+- Node: a paper with 128-dimensional word2vec features, which summarizes its title and abstract.
+- Edge: directed edge indicates that one paper cites another.
+
+Implements: [`graphdata`](@ref), [`train_indices`](@ref), [`valid_indices`](@ref), [`test_indices`](@ref), [`node_features`](@ref)
+"""
 struct OGBLCitation2 <: LinkPropPredDataset end
 struct OGBLWikiKG2 <: LinkPropPredDataset end
 struct OGBLBioKG <: LinkPropPredDataset end

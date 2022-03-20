@@ -64,12 +64,9 @@ function to_weightegraph(edges::DataFrame, num_V::Integer)
 end
 
 function read_npyarray(reader, index::String)
-    i = findfirst(x -> x.name == (index * ".npy"), reader.files)
-    return NPZ.npzreadarray(reader.files[i])
-end
-
-function read_npzarray(reader, index::String)
-    i = findfirst(x -> x.name == (index * ".npz"), reader.files)
+    exist = map(x -> x.name == (index * ".npy"), reader.files)
+    any(exist) || (exist = map(x -> x.name == (index * ".npz"), reader.files))
+    i = findfirst(exist)
     return NPZ.npzreadarray(reader.files[i])
 end
 

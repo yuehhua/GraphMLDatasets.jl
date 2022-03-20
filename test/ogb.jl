@@ -106,8 +106,8 @@
     @testset "OGBLPPA" begin
         graph = graphdata(OGBLPPA())
         @test graph isa SimpleGraph{Int32}
-        @test nv(graph) == 576289
-        @test ne(graph) == 21231931
+        @test nv(graph) == 576_289
+        @test ne(graph) == 21_231_931
 
         nf = node_features(OGBLPPA())
         @test nf isa Matrix{Float32}
@@ -117,8 +117,8 @@
     @testset "OGBLCollab" begin
         graph = graphdata(OGBLCollab())
         @test graph isa SimpleWeightedGraph{Int32,Float32}
-        @test nv(graph) == 235868
-        @test ne(graph) == 967632
+        @test nv(graph) == 235_868
+        @test ne(graph) == 967_632
 
         nf = node_features(OGBLCollab())
         @test nf isa Matrix{Float32}
@@ -128,13 +128,32 @@
     @testset "OGBLDDI" begin
         graph = graphdata(OGBLDDI())
         @test graph isa SimpleGraph{Int32}
-        @test nv(graph) == 4267
-        @test ne(graph) == 1067911
+        @test nv(graph) == 4_267
+        @test ne(graph) == 1_067_911
 
         df = metadata(OGBLDDI())
         @test df isa DataFrame
         @test nrow(df) == 2669764
         @test names(df) == ["first drug id", "first drug name", "second drug id",
                             "second drug name", "description"]
+    end
+
+    @testset "OGBLCitation2" begin
+        graph = graphdata(OGBLCitation2())
+        @test graph isa SimpleGraph{Int32}
+        @test nv(graph) == 2_927_963
+        @test ne(graph) == 30_561_880
+
+        nf = node_features(OGBLCitation2())
+        @test nf isa Matrix{Float32}
+        @test size(nf) == (nv(graph), GraphMLDatasets.feature_dim(OGBLCitation2, :node))
+    end
+
+    @testset "OGBLWikiKG2" begin
+
+    end
+
+    @testset "OGBLBioKG" begin
+
     end
 end

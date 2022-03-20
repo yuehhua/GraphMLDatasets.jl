@@ -44,6 +44,7 @@ feature_dim(::Type{OGBNArxiv}, ::Val{:node}) = 128
 # feature_dim(::Type{OGBNMag}, ::Val{:node}) = 128
 feature_dim(::Type{OGBLPPA}, ::Val{:node}) = 58
 feature_dim(::Type{OGBLCollab}, ::Val{:node}) = 128
+feature_dim(::Type{OGBLCitation2}, ::Val{:node}) = 128
 
 split_prefix(::Type{OGBNProteins}) = "species"
 split_prefix(::Type{OGBNProducts}) = "sales_ranking"
@@ -65,6 +66,17 @@ function read_indices(obg::Type{<:OGBDataset}, reader, dir::String)
     train_indices = read_train_indices(reader, prefix)
     valid_indices = read_valid_indices(reader, prefix)
     test_indices = read_test_indices(reader, prefix)
+    return train_indices, valid_indices, test_indices
+end
+
+function read_indices(obg::Type{<:OGBDataset}, dir::String, prefix::String)
+    prefix = joinpath(dir, prefix, "split", split_prefix(obg))
+    train_indices = Pickle.Torch.THload(joinpath(prefix, "train.pt"))
+    valid_indices = Pickle.Torch.THload(joinpath(prefix, "valid.pt"))
+    test_indices = Pickle.Torch.THload(joinpath(prefix, "test.pt"))
+    train_indices = Dict{String,Array{Int}}(train_indices...)
+    valid_indices = Dict{String,Array{Int}}(valid_indices...)
+    test_indices = Dict{String,Array{Int}}(test_indices...)
     return train_indices, valid_indices, test_indices
 end
 
@@ -114,6 +126,13 @@ function read_graph(reader, dir::String)
     return V, E, edges
 end
 
+function read_graph(dir::String, prefix::String)
+    V = read_num_node(joinpath(dir, prefix))
+    E = read_num_edge(joinpath(dir, prefix))
+    edges = read_edges(joinpath(dir, prefix))
+    return V, E, edges
+end
+
 function read_weighted_graph(reader, dir::String)
     V = read_num_node(reader, dir)
     E = read_num_edge(reader, dir)
@@ -129,15 +148,35 @@ function read_num_node(reader, dir::String)
     return df.number[1]
 end
 
+function read_num_node(dir::String)
+    filename = joinpath(dir, "num-node-list.csv.gz")
+    df = read_csv_gz(filename, [:number])
+    return df.number[1]
+end
+
 function read_num_edge(reader, dir::String)
     filename = joinpath(dir, "num-edge-list.csv.gz")
     df = read_zipfile(reader, filename, [:number])
     return df.number[1]
 end
 
+function read_num_edge(dir::String)
+    filename = joinpath(dir, "num-edge-list.csv.gz")
+    df = read_csv_gz(filename, [:number])
+    return df.number[1]
+end
+
 function read_edges(reader, dir::String)
     filename = joinpath(dir, "edge.csv.gz")
     df = read_zipfile(reader, filename, [:node1, :node2])
+    df[:, :node1] .+= 1
+    df[:, :node2] .+= 1
+    return df
+end
+
+function read_edges(dir::String)
+    filename = joinpath(dir, "edge.csv.gz")
+    df = read_csv_gz(filename, [:node1, :node2])
     df[:, :node1] .+= 1
     df[:, :node2] .+= 1
     return df
@@ -246,5 +285,12 @@ function read_features(dataset::Type{<:OGBDataset}, reader, dir::String, csv_pre
     filename = joinpath(dir, csv_prefix * "-feat.csv.gz")
     header = false
     df = read_zipfile(reader, filename, header)
+    return Matrix{Float32}(df)
+end
+
+function read_features(dataset::Type{<:OGBDataset}, dir::String, csv_prefix::String)
+    filename = joinpath(dir, csv_prefix * "-feat.csv.gz")
+    header = false
+    df = read_csv_gz(filename, header)
     return Matrix{Float32}(df)
 end
