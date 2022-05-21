@@ -55,18 +55,40 @@ function to_simpledigraph(edges::DataFrame, num_V::Integer)
     return g
 end
 
-function read_npyarray(reader, index::String)
-    i = findfirst(x -> x.name == (index * ".npy"), reader.files)
-    return NPZ.npzreadarray(reader.files[i])
+function to_weightegraph(edges::DataFrame, num_V::Integer)
+    spA = sparse(Int32.(edges.node1), Int32.(edges.node2), Float32.(edges.weight), num_V, num_V)
+    selfloops = diag(spA)
+    if nnz(selfloops) == 0
+        return SimpleWeightedGraph(spA + spA')
+    end
 end
 
-function read_npzarray(reader, index::String)
-    i = findfirst(x -> x.name == (index * ".npz"), reader.files)
+function read_npyarray(reader, index::String)
+    exist = map(x -> x.name == (index * ".npy"), reader.files)
+    any(exist) || (exist = map(x -> x.name == (index * ".npz"), reader.files))
+    i = findfirst(exist)
     return NPZ.npzreadarray(reader.files[i])
 end
 
 function read_zipfile(reader, filename::String, header)
     file = filter(x -> x.name == filename, reader.files)[1]
+    return read_csv_gz(file, header)
+end
+
+function read_csv_gz(file, header)
     df = CSV.File(transcode(GzipDecompressor, read(file)); header=header) |> DataFrame
     return df
+end
+
+function read_torch_pickle(file)
+    pklr = Pickle.Torch.TorchPickler()
+    pklr.mt["numpy.core.multiarray._reconstruct"] = Pickle.np_multiarray_reconstruct
+    pklr.mt["numpy.dtype"] = Pickle.np_dtype
+    pklr.mt["numpy.core.multiarray.scalar"] = Pickle.np_scalar
+    pklr.mt["__build__.Pickle.NpyDtype"] = Pickle.build_npydtype
+    pklr.mt["__build__.Pickle.NpyArrayPlaceholder"] = Pickle.build_nparray
+    pklr.mt["scipy.sparse.csr.csr_matrix"] = Pickle.sparse_matrix_reconstruct
+    pklr.mt["__build__.Pickle.SpMatrixPlaceholder"] = Pickle.build_spmatrix
+    obj = Pickle.Torch.unchecked_legacy_load(pklr, file)
+    return Dict{String,AbstractArray}(obj)
 end

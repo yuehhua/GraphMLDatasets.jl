@@ -135,9 +135,9 @@ end
 
 function dataset_preprocess(dataset::Type{Reddit})
     return function preprocess(local_path)
-        reader = ZipFile.Reader(local_path)
-        graph_file = IOBuffer(read(reader.files[1]))  # reddit_graph.npz
-        data_file = IOBuffer(read(reader.files[2]))  # reddit_data.npz
+        unzip_zip(local_path)
+        graph_file = datadep"Reddit/reddit_graph.npz"
+        data_file = datadep"Reddit/reddit_data.npz"
 
         rawfile = replace(local_path, "reddit.zip"=>"reddit.raw.jld2")
         graph, X, y = to_reddit_rawfile(graph_file, data_file, rawfile)
@@ -155,6 +155,8 @@ function dataset_preprocess(dataset::Type{Reddit})
         JLD2.save(graphfile, "sg", sg)
         JLD2.save(allfile, "all_X", all_X, "all_y", all_y)
         JLD2.save(metadatafile, "meta", meta)
+        rm(graph_file)
+        rm(data_file)
     end
 end
 
@@ -358,5 +360,121 @@ function dataset_preprocess(dataset::Type{OGBNPapers100M})
         # JLD2.save(graphfile, "sg", graph)
         # JLD2.save(featfile, "edge_feat", edge_feat)
         # JLD2.save(labelfile, "node_label", node_label)
+    end
+end
+
+
+## OGBLPPA dataset
+
+function dataset_preprocess(dataset::Type{OGBLPPA})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "ppassoc")
+        V, E, edges = read_graph(reader, "ppassoc/raw")
+        node_feat = read_features(dataset, reader, "ppassoc/raw", "node")
+        graph = to_simplegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "ppassoc.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "ppassoc.zip"=>"graph.jld2")
+        featfile = replace(local_path, "ppassoc.zip"=>"node_feat.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(featfile, "node_feat", node_feat)
+    end
+end
+
+
+## OGBLCollab dataset
+
+function dataset_preprocess(dataset::Type{OGBLCollab})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "collab")
+        V, E, edges = read_weighted_graph(reader, "collab/raw")
+        node_feat = read_features(dataset, reader, "collab/raw", "node")
+        graph = to_weightegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "collab.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "collab.zip"=>"graph.jld2")
+        featfile = replace(local_path, "collab.zip"=>"node_feat.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(featfile, "node_feat", node_feat)
+    end
+end
+
+
+## OGBLDDI dataset
+
+function dataset_preprocess(dataset::Type{OGBLDDI})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "ddi")
+        V, E, edges = read_graph(reader, "ddi/raw")
+        graph = to_simplegraph(edges, V)
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+        desc = read_desciption(reader, "ddi")
+
+        indicesfile = replace(local_path, "ddi.zip"=>"indices.jld2")
+        graphfile = replace(local_path, "ddi.zip"=>"graph.jld2")
+        metadatafile = replace(local_path, "ddi.zip"=>"metadata.jld2")
+        
+        JLD2.save(indicesfile, indices)
+        JLD2.save(graphfile, "sg", graph)
+        JLD2.save(metadatafile, "meta", desc)
+    end
+end
+
+
+## OGBLCitation2 dataset
+
+function dataset_preprocess(dataset::Type{OGBLCitation2})
+    return function preprocess(local_path)
+        unzip_zip(local_path)
+        dir = dirname(local_path)
+
+        train_indices, valid_indices, test_indices = read_indices(dataset, dir, "citation-v2")
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+        indicesfile = replace(local_path, "citation-v2.zip"=>"indices.jld2")
+        JLD2.save(indicesfile, indices)
+        rm(joinpath(dir, "split"), force=true, recursive=true)
+        
+        V, E, edges = read_graph(dir, "citation-v2/raw")
+        graph = to_simplegraph(edges, V)
+        graphfile = replace(local_path, "citation-v2.zip"=>"graph.jld2")
+        JLD2.save(graphfile, "sg", graph)
+
+        node_feat = read_features(dataset, joinpath(dir, "citation-v2/raw"), "node")
+        featfile = replace(local_path, "citation-v2.zip"=>"node_feat.jld2")
+        JLD2.save(featfile, "node_feat", node_feat)
+        rm(dir, force=true, recursive=true)
+    end
+end
+
+
+## OGBLWikiKG2 dataset
+
+function dataset_preprocess(dataset::Type{OGBLWikiKG2})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+    end
+end
+
+
+## OGBLBioKG dataset
+
+function dataset_preprocess(dataset::Type{OGBLBioKG})
+    return function preprocess(local_path)
+        reader = ZipFile.Reader(local_path)
+        train_indices, valid_indices, test_indices = read_indices(dataset, reader, "biokg")
+        indices = Dict("train_indices"=>train_indices, "valid_indices"=>valid_indices, "test_indices"=>test_indices)
+
+        indicesfile = replace(local_path, "biokg.zip"=>"indices.jld2")
+
+        JLD2.save(indicesfile, indices)
     end
 end
